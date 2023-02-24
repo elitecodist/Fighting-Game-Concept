@@ -1,4 +1,4 @@
-import { Fighter } from './fighter.js';
+import { Fighter } from './Fighter.js';
 
 export class Ken extends Fighter {
     constructor(x, y, velocity){
@@ -29,5 +29,10 @@ export class Ken extends Fighter {
             ['backwards-5', [[706, 147, 61, 95], [31, 95]]],
             ['backwards-6', [[775, 148, 63, 94], [32, 94]]],
         ]);
+
+        this.animations = {
+            'walkForwards': ['forwards-1','forwards-2','forwards-3','forwards-4','forwards-5','forwards-6',],
+            'walkBackwards': ['backwards-1','backwards-2','backwards-3','backwards-4','backwards-5','backwards-6',],
+        }
     }
 }

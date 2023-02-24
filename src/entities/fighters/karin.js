@@ -1,4 +1,4 @@
-import { Fighter } from './fighter.js';
+import { Fighter } from './Fighter.js';
 
 export class Karin extends Fighter {
     constructor(x, y, velocity){
@@ -17,12 +17,16 @@ export class Karin extends Fighter {
             ['backwards-1', [[16, 241, 83, 86], [42, 86]]],
             ['backwards-2', [[277, 238, 72, 89], [36, 89]]],
             ['backwards-3', [[436, 235, 72, 92], [36, 92]]],
-            ['backwards-4', [[597, 236, 72, 89], [76, 91]]],
+            ['backwards-4', [[597, 236, 72, 89], [36, 89]]],
             ['backwards-5', [[776, 241, 93, 86], [47, 86]]],
             ['backwards-6', [[1074, 241, 83, 86], [42, 86]]],
         ]);
 
 
         // this.frame = [16, 27, 88, 84];
+        this.animations = {
+            'walkForwards': ['forwards-1','forwards-2','forwards-3','forwards-4','forwards-5','forwards-6',],
+            'walkBackwards': ['backwards-1','backwards-2','backwards-3','backwards-4','backwards-5','backwards-6',],
+        }
     }
 }

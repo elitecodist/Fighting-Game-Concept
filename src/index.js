@@ -1,25 +1,21 @@
-import { Ken } from "./entities/fighters/ken.js"
-import { Karin } from "./entities/fighters/karin.js"
-import { Stage } from "./entities/stage.js"
-import { FpsCounter } from "./entities/fpsCounter.js";
+import { Ken } from "./entities/fighters/Ken.js"
+import { Karin } from "./entities/fighters/Karin.js"
+import { Stage } from "./entities/Stage.js"
+import { FpsCounter } from "./entities/FpsCounter.js";
 import { STAGE_FLOOR } from './constants/stage.js';
+import { FighterDirection } from "./constants/fighter.js";
 
-const GameViewport = {
-    WIDTH: 384,
-    HEIGHT: 224,
-};
 
 window.addEventListener('load', function() {
     const canvasElem = document.querySelector('canvas');
     const context = canvasElem.getContext('2d');
 
-    canvasElem.width = GameViewport.WIDTH;
-    canvasElem.height = GameViewport.HEIGHT;
+    context.imageSmoothingEnabled = false;
 
     const entities = [
         new Stage(),
-        new Ken(80,STAGE_FLOOR,150),
-        new Karin(80,STAGE_FLOOR,-150),
+        new Ken(104, STAGE_FLOOR, FighterDirection.LEFT),
+        new Karin(280, STAGE_FLOOR, FighterDirection.RIGHT),
         new FpsCounter()
     ];
 

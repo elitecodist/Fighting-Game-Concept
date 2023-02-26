@@ -4,13 +4,14 @@ import { Stage } from "./entities/Stage.js"
 import { FpsCounter } from "./entities/FpsCounter.js";
 import { STAGE_FLOOR } from './constants/stage.js';
 import { FighterDirection } from "./constants/fighter.js";
+import { pollGamepads, registerGamepadEvents, registerKeyboardEvents } from "./InputHandler.js";
 
 export class UntitledCardGame {
     constructor() {
         this.context = this.getContext();
         this.fighters = [
-            new Ken(104, STAGE_FLOOR, FighterDirection.RIGHT),
-            new Karin(280, STAGE_FLOOR, FighterDirection.LEFT),
+            new Ken(104, STAGE_FLOOR, FighterDirection.RIGHT, 0),
+            new Karin(280, STAGE_FLOOR, FighterDirection.LEFT, 1),
         ];
         
         this.entities = [
@@ -54,30 +55,34 @@ export class UntitledCardGame {
             previous: time,
         }
 
+        pollGamepads();
         this.update();
         this.draw();
 
     }
 
-    handleFormSubmit(event) {
-        event.preventDefault();
+    // handleFormSubmit(event) {
+    //     event.preventDefault();
 
-        const selectedCheckboxes = Array
-            .from(event.target.querySelectorAll('input:checked'))
-            .map(checkbox => checkbox.value);
+    //     const selectedCheckboxes = Array
+    //         .from(event.target.querySelectorAll('input:checked'))
+    //         .map(checkbox => checkbox.value);
 
-        const options = event.target.querySelector('select');
+    //     const options = event.target.querySelector('select');
 
-        this.fighters.forEach(fighter => {
-            if (selectedCheckboxes.includes(fighter.name)) {
-                fighter.changeState(options.value);
-            }
-        })
-    }
+    //     this.fighters.forEach(fighter => {
+    //         if (selectedCheckboxes.includes(fighter.name)) {
+    //             fighter.changeState(options.value);
+    //         }
+    //     })
+    // }
 
     start() {
-        document.addEventListener('submit', this.handleFormSubmit.bind(this));
+        // document.addEventListener('submit', this.handleFormSubmit.bind(this));
     
+        registerKeyboardEvents();
+        registerGamepadEvents();
+
         window.requestAnimationFrame(this.frame.bind(this));
     }
 

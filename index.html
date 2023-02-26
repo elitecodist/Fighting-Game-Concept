@@ -13,26 +13,31 @@
             margin: 0;
             height: 100%;
         }
-        body{
+
+        body {
             display: flex;
-            flex-direction: column;
+            /* flex-direction: column;
             --form-height: 6rem;
-            --form-content-size: 2rem;
+            --form-content-size: 2rem; */
         }
+
         body,
         canvas {
             background-color: black;
         }
+
         canvas {
             width: 100%;
             object-fit: contain;
             image-rendering: crisp-edges;
             image-rendering: pixelated;
         }
+
         img {
             display: none;
         }
-        form {
+
+        /* form {
             display: flex;
             flex-wrap: wrap;
             width: 100%;
@@ -41,26 +46,31 @@
             gap: var(--form-content-size);
             height: var(--form-content-size);
         }
+
         form * {
             font-size: var(--form-content-size);
         }
+
         input[type="checkbox"] {
             width: var(--form-content-size);
             height: var(--form-content-size);
         }
+
         main {
             display: flex;
             height: calc(100% - var(--form-height));
         }
+
         label {
             color: white;
-        }
+        } */
     </style>
     <script type="module" src="./src/index.js"></script>
 </head>
 
 <body>
-    <form>
+
+    <!-- <form>
         <div>
             <input id="ken" type="checkbox" name="fighter" value="Ken" />
             <label for="ken">Ken</label>
@@ -71,13 +81,13 @@
         </div>
         <select id="state-dropdown" name="state"></select>
         <button type="submit">FLOP THE OPPS</button>
-    </form>
-    <main>
-        <canvas width="384" height="224"></canvas>    
-    </main>
-    <img src = "./assets/sprites/ken.png" alt="ken"/>
-    <img src = "./assets/backgrounds/backgroundNEG.png" alt="background"/>
-    <img src = "./assets/sprites/karin.png" alt="karin"/>
+    </form> -->
+    <!-- <main> -->
+    <canvas width="384" height="224"></canvas>
+    <!-- </main> -->
+    <img src="./assets/sprites/ken.png" alt="ken" />
+    <img src="./assets/backgrounds/backgroundNEG.png" alt="background" />
+    <img src="./assets/sprites/karin.png" alt="karin" />
 </body>
 
 </html>

@@ -2,8 +2,8 @@ import { FighterState } from '../../constants/fighter.js';
 import { Fighter } from './Fighter.js';
 
 export class Ken extends Fighter {
-    constructor(x, y, velocity){
-        super('Ken',x,y,velocity);
+    constructor(x, y, direction, playerId) {
+        super('Ken', x, y, direction, playerId);
 
         this.image = document.querySelector('img[alt="ken"]');
 
@@ -21,7 +21,7 @@ export class Ken extends Fighter {
             ['forward-4', [[249, 146, 59, 96], [30, 96]]],
             ['forward-5', [[316, 147, 54, 95], [27, 95]]],
             ['forward-6', [[378, 148, 56, 94], [28, 94]]],
-            
+
             ['backward-1', [[442, 153, 63, 89], [32, 89]]],
             ['backward-2', [[513, 148, 61, 94], [31, 94]]],
             ['backward-3', [[582, 147, 54, 95], [27, 95]]],
@@ -56,7 +56,7 @@ export class Ken extends Fighter {
                 ['idle-4', 68], ['idle-5', 68], ['idle-6', 68]
             ],
             [FighterState.WALK_FORWARD]: [
-                ['forward-1', 65], ['forward-2', 65], ['forward-3', 65], 
+                ['forward-1', 65], ['forward-2', 65], ['forward-3', 65],
                 ['forward-4', 65], ['forward-5', 65], ['forward-6', 65],
             ],
             [FighterState.WALK_BACKWARD]: [
@@ -64,36 +64,36 @@ export class Ken extends Fighter {
                 ['backward-4', 65], ['backward-5', 65], ['backward-6', 65],
             ],
             [FighterState.JUMP_NEUTRAL]: [
-                ['jNeutral-1', 150], ['jNeutral-2', 70], ['jNeutral-3', 70], 
-                ['jNeutral-4', 70], ['jNeutral-5', 70], ['jNeutral-6', -1], 
+                ['jNeutral-1', 150], ['jNeutral-2', 70], ['jNeutral-3', 70],
+                ['jNeutral-4', 70], ['jNeutral-5', 70], ['jNeutral-6', -1],
             ],
             [FighterState.JUMP_FORWARD]: [
-                ['jRoll-1', 180], ['jRoll-2', 50], ['jRoll-3', 50], 
-                ['jRoll-4', 50], ['jRoll-5', 50], ['jRoll-6', 50], 
+                ['jRoll-1', 180], ['jRoll-2', 50], ['jRoll-3', 50],
+                ['jRoll-4', 50], ['jRoll-5', 50], ['jRoll-6', 50],
                 ['jRoll-7', 0],
             ],
             [FighterState.JUMP_BACKWARD]: [
-                ['jRoll-7', 200], ['jRoll-6', 50], ['jRoll-5', 50], 
-                ['jRoll-4', 50], ['jRoll-3', 50], ['jRoll-2', 50], 
-                ['jRoll-1', 0], 
+                ['jRoll-7', 200], ['jRoll-6', 50], ['jRoll-5', 50],
+                ['jRoll-4', 50], ['jRoll-3', 50], ['jRoll-2', 50],
+                ['jRoll-1', 0],
             ],
             [FighterState.CROUCH]: [
-                ['crouch-3', 0], 
+                ['crouch-3', 0],
             ],
             [FighterState.CROUCH_DOWN]: [
-                ['crouch-1', 30], ['crouch-2', 30], ['crouch-3', 30], ['crouch-3', -2], 
+                ['crouch-1', 30], ['crouch-2', 30], ['crouch-3', 30], ['crouch-3', -2],
             ],
             [FighterState.CROUCH_RISE]: [
-                ['crouch-3', 30], ['crouch-2', 30], ['crouch-1', 30], ['crouch-1', -2], 
+                ['crouch-3', 30], ['crouch-2', 30], ['crouch-1', 30], ['crouch-1', -2],
             ]
         };
 
         this.initialVelocity = {
             x: {
-                [FighterState.WALK_FORWARD]: 200,
-                [FighterState.WALK_BACKWARD]: -150,
-                [FighterState.JUMP_FORWARD]: 170,
-                [FighterState.JUMP_BACKWARD]: -200,
+                [FighterState.WALK_FORWARD]: 220,
+                [FighterState.WALK_BACKWARD]: -170,
+                [FighterState.JUMP_FORWARD]: 190,
+                [FighterState.JUMP_BACKWARD]: -220,
             },
             jump: -800,
         };

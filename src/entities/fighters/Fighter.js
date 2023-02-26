@@ -24,19 +24,20 @@ export class Fighter {
                 validFrom: [
                     undefined,
                     FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD,
-                    FighterState.JUMP_NEUTRAL, FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD
+                    FighterState.JUMP_NEUTRAL, FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD,
+                    FighterState.CROUCH_RISE
                 ],
             },
             [FighterState.WALK_FORWARD]: {
                 init: this.handleWalkInit,
-                update: this.handleWalkState,
+                update: () => {},
                 validFrom: [
-                    FighterState.IDLE, FighterState.JUMP_BACKWARD,
+                    FighterState.IDLE, FighterState.WALK_BACKWARD,
                 ],
             },
             [FighterState.WALK_BACKWARD]: {
                 init: this.handleWalkInit,
-                update: this.handleWalkState,
+                update: () => {},
                 validFrom: [
                     FighterState.IDLE, FighterState.WALK_FORWARD,
                 ],
@@ -60,6 +61,27 @@ export class Fighter {
                 update: this.handleJumpState,
                 validFrom: [
                     FighterState.IDLE, FighterState.WALK_BACKWARD,
+                ],
+            },
+            [FighterState.CROUCH]: {
+                init: () => {},
+                update: () => {},
+                validFrom: [
+                    FighterState.CROUCH_DOWN
+                ],
+            },
+            [FighterState.CROUCH_DOWN]: {
+                init: () => {},
+                update: this.handleCrouchDownState,
+                validFrom: [
+                    FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD
+                ],
+            },
+            [FighterState.CROUCH_RISE]: {
+                init: () => {},
+                update: this.handleCrouchRiseState,
+                validFrom: [
+                    FighterState.CROUCH
                 ],
             },
         }
@@ -102,6 +124,17 @@ export class Fighter {
 
         if (this.position.y > STAGE_FLOOR) {
             this.position.y = STAGE_FLOOR;
+            this.changeState(FighterState.IDLE);
+        }
+    }
+
+    handleCrouchDownState = () => {
+        if (this.animations[this.currentState][this.animationFrame][1] === -2){
+            this.changeState(FighterState.CROUCH);
+        }
+    }
+    handleCrouchRiseState = () => {
+        if (this.animations[this.currentState][this.animationFrame][1] === -2){
             this.changeState(FighterState.IDLE);
         }
     }

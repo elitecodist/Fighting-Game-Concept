@@ -44,6 +44,10 @@ export class Karin extends Fighter {
             ['jRoll-5', [[611, 1902, 88, 60], [44, 60]]],
             ['jRoll-6', [[794, 1873, 73, 89], [37, 89]]],
             ['jRoll-7', [[875, 1854, 67, 108], [34, 108]]],
+
+            ['crouch-1', [[16, 1028, 91, 79], [46, 79]]],
+            ['crouch-2', [[115, 1042, 77, 65], [39, 65]]],
+            ['crouch-3', [[200, 1045, 69, 62], [35, 62]]],
         ]);
 
 
@@ -74,6 +78,15 @@ export class Karin extends Fighter {
                 ['jRoll-1', 180], ['jRoll-2', 50], ['jRoll-3', 50], 
                 ['jRoll-4', 50], ['jRoll-5', 50], ['jRoll-6', 50], 
                 ['jRoll-7', 0],
+            ],
+            [FighterState.CROUCH]: [
+                ['crouch-3', 0], 
+            ],
+            [FighterState.CROUCH_DOWN]: [
+                ['crouch-1', 30], ['crouch-2', 30], ['crouch-3', 30], ['crouch-3', -2], 
+            ],
+            [FighterState.CROUCH_RISE]: [
+                ['crouch-3', 30], ['crouch-2', 30], ['crouch-1', 30], ['crouch-1', -2], 
             ]
         };
 

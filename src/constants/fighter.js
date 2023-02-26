@@ -9,5 +9,8 @@ export const FighterState = {
     WALK_BACKWARD: 'walkBackward',
     JUMP_NEUTRAL: 'jumpNeutral',
     JUMP_FORWARD: 'jumpForward',
-    JUMP_BACKWARD: 'jumpBackward'
+    JUMP_BACKWARD: 'jumpBackward',
+    CROUCH: 'crouch',
+    CROUCH_DOWN: 'cDown',
+    CROUCH_RISE: 'cRise',
 };

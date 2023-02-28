@@ -8,9 +8,9 @@ export class FpsCounter {
     }
 
     draw(context){
-        context.font = "bold 20px Arial";
+        context.font = "bold 14px Arial";
         context.fillStyle = "red";
-        context.textAlign = "center";
-        context.fillText(`FPS: ${this.fps}`, context.canvas.width / 2, 30);
+        context.textAlign = "right";
+        context.fillText(`FPS: ${this.fps}`, context.canvas.width - 2, context.canvas.height -2);
     }
 }

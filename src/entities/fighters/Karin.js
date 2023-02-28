@@ -1,5 +1,5 @@
 import { Fighter } from './Fighter.js';
-import { FighterState, PushBox } from '../../constants/fighter.js';
+import { FighterState, PushBox, FrameDelay } from '../../constants/fighter.js';
 
 export class Karin extends Fighter {
     constructor(x, y, direction, playerId) {
@@ -74,39 +74,39 @@ export class Karin extends Fighter {
                 ['backward-4', 65], ['backward-5', 65], ['backward-6', 65],
             ],
             [FighterState.JUMP_START]: [
-                ['jLand', 50], ['jLand', -2]
+                ['jLand', 50], ['jLand', FrameDelay.TRANSITION]
             ],
             [FighterState.JUMP_NEUTRAL]: [
                 ['jNeutral-1', 150], ['jNeutral-2', 70], ['jNeutral-3', 70],
-                ['jNeutral-4', 70], ['jNeutral-5', 70], ['jNeutral-6', -1],
+                ['jNeutral-4', 70], ['jNeutral-5', 70], ['jNeutral-6', FrameDelay.FREEZE],
             ],
             [FighterState.JUMP_FORWARD]: [
                 ['jNeutral-1', 100], ['jNeutral-2', 50], ['jRoll-5', 50],
                 ['jRoll-4', 50], ['jRoll-3', 50], ['jRoll-2', 50],
-                ['jRoll-1', 0],
+                ['jRoll-1', FrameDelay.FREEZE],
             ],
             [FighterState.JUMP_BACKWARD]: [
-                ['jRoll-1', 180], ['jRoll-2', 50], ['jRoll-3', 50],
+                ['jRoll-1', 100], ['jRoll-2', 70], ['jRoll-3', 50],
                 ['jRoll-4', 50], ['jRoll-5', 50], ['jRoll-6', 50],
-                ['jRoll-7', 0],
+                ['jRoll-7', FrameDelay.FREEZE],
             ],
             [FighterState.JUMP_LAND]: [
-                ['jLand', 33], ['jLand', 117], ['jLand', -2],
+                ['jLand', 33], ['jLand', 117], ['jLand', FrameDelay.TRANSITION],
             ],
             [FighterState.CROUCH]: [
-                ['crouch-3', 0],
+                ['crouch-3', FrameDelay.FREEZE],
             ],
             [FighterState.CROUCH_DOWN]: [
-                ['crouch-1', 30], ['crouch-2', 30], ['crouch-3', 30], ['crouch-3', -2],
+                ['crouch-1', 30], ['crouch-2', 30], ['crouch-3', 30], ['crouch-3', FrameDelay.TRANSITION],
             ],
             [FighterState.CROUCH_RISE]: [
-                ['crouch-3', 30], ['crouch-2', 30], ['crouch-1', 30], ['crouch-1', -2],
+                ['crouch-3', 30], ['crouch-2', 30], ['crouch-1', 30], ['crouch-1', FrameDelay.TRANSITION],
             ],
             [FighterState.IDLE_TURN]: [
-                ['iTurn-3', 33], ['iTurn-2', 33], ['iTurn-1', 33], ['iTurn-1', -2],
+                ['iTurn-3', 33], ['iTurn-2', 33], ['iTurn-1', 33], ['iTurn-1', FrameDelay.TRANSITION],
             ],
             [FighterState.CROUCH_TURN]: [
-                ['cTurn-3', 33], ['cTurn-2', 33], ['cTurn-1', 33], ['cTurn-1', -2],
+                ['cTurn-3', 33], ['cTurn-2', 33], ['cTurn-1', 33], ['cTurn-1', FrameDelay.TRANSITION],
             ]
         };
 

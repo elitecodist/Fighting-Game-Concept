@@ -1,6 +1,12 @@
-import { FighterDirection, FighterState } from "../../constants/fighter.js";
+import { FighterDirection, FighterState, FrameDelay, PUSH_FRICTION } from "../../constants/fighter.js";
 import { STAGE_FLOOR } from "../../constants/stage.js";
 import * as control from "../../InputHandler.js";
+import { boxOverlap } from "../../util/collision.js";
+
+const pushableStates = [
+    FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_NEUTRAL,
+    FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD,
+]
 
 export class Fighter {
     constructor(name, x, y, direction, playerId) {
@@ -126,9 +132,22 @@ export class Fighter {
         this.changeState(FighterState.IDLE);
     }
 
-    getDirection = () => this.position.x >= this.opponent.position.x
-        ? FighterDirection.LEFT : FighterDirection.RIGHT;
+    isAnimeComplete = () => this.animations[this.currentState][this.animationFrame][1] === FrameDelay.TRANSITION;
 
+    resetVelocities() {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+    }
+
+    getDirection = () => {
+        if (this.position.x + this.pushBox.x + this.pushBox.width <= this.opponent.position.x + this.opponent.pushBox.x){
+            return FighterDirection.RIGHT;
+        } else if (this.position.x + this.pushBox.x >= this.opponent.position.x + this.opponent.pushBox.x + this.opponent.pushBox.width) {
+            return FighterDirection.LEFT;
+        }
+
+        return this.direction;
+    }
     getPushBox(frameKey) {
         const [, [x, y, width, height] = [0,0,0,0]] = this.frames.get(frameKey);
 
@@ -147,14 +166,13 @@ export class Fighter {
     }
 
     handleIdleInit = () => {
-        this.velocity.x = 0;
-        this.velocity.y = 0;
+        this.resetVelocities();
     }
     handleIdleState = () => {
         if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
-        if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
-        if (control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.WALK_BACKWARD);
-        if (control.isForward(this.playerId, this.direction)) this.changeState(FighterState.WALK_FORWARD);
+        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+        else if (control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.WALK_BACKWARD);
+        else if (control.isForward(this.playerId, this.direction)) this.changeState(FighterState.WALK_FORWARD);
 
         const newDirection = this.getDirection();
 
@@ -167,13 +185,13 @@ export class Fighter {
     handleIdleTurnState = () => {
         this.handleIdleState();
 
-        if (this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+        if (!this.isAnimeComplete()) return;
         this.changeState(FighterState.IDLE);
     }    
     handleCrouchTurnState = () => {
         this.handleCrouchState();
 
-        if (this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+        if (!this.isAnimeComplete()) return;
         this.changeState(FighterState.CROUCH);
     }
 
@@ -182,24 +200,24 @@ export class Fighter {
     }
     handleWalkForwardState = () => {
         if (!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
-        if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
-        if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+        else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
+        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
     
         this.direction = this.getDirection();
     }
     handleWalkBackwardState = () => {
         if (!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
-        if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
-        if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+        else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
+        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
     
         this.direction = this.getDirection();
     }
 
     handleJumpStartInit = () => {
-        this.handleIdleInit();
+        this.resetVelocities();
     }
     handleJumpStartState = () => {
-        if (this.animations[this.currentState][this.animationFrame][1] === -2) {
+        if (this.isAnimeComplete()) {
             if (control.isBackward(this.playerId, this.direction)) {
                 this.changeState(FighterState.JUMP_BACKWARD);
             } else if (control.isForward(this.playerId, this.direction)) {
@@ -211,7 +229,7 @@ export class Fighter {
     }
 
     handleJumpLandInit = () => {
-        this.handleIdleInit();
+        this.resetVelocities();
     }
     handleJumpLandState = () => {
         if (this.animationFrame < 1) return;
@@ -229,7 +247,7 @@ export class Fighter {
                 this.direction = newDirection;
                 newState = FighterState.IDLE_TURN;
             } else {
-                if (this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+                if (!this.isAnimeComplete()) return;
             }
         } 
 
@@ -260,31 +278,68 @@ export class Fighter {
         }
     }
     handleCrouchDownInit = () => {
-        this.handleIdleInit(); //velocities to 0
+        this.resetVelocities(); //velocities to 0
     }
     handleCrouchDownState = () => {
-        if (this.animations[this.currentState][this.animationFrame][1] === -2) {
+        if (this.isAnimeComplete()) {
             this.changeState(FighterState.CROUCH);
+        }
+
+        if (!control.isDown(this.playerId)) {
+            this.currentState = FighterState.CROUCH_RISE;
+            this.animationFrame = this.animations[FighterState.CROUCH_RISE][this.animationFrame].length - this.animationFrame;
         }
     }
     handleCrouchRiseInit = () => {
 
     }
     handleCrouchRiseState = () => {
-        if (this.animations[this.currentState][this.animationFrame][1] === -2) {
+        if (this.isAnimeComplete()) {
             this.changeState(FighterState.IDLE);
         }
     }
 
-    updateStageConstraints(context) {
-        const WIDTH = 32;
+    hasCollidedWithOpp = () => boxOverlap(
+        this.position.x + this.pushBox.x,
+        this.position.y + this.pushBox.y,
+        this.pushBox.width, this.pushBox.height,
+        this.opponent.position.x + this.opponent.pushBox.x,
+        this.opponent.position.y + this.opponent.pushBox.y,
+        this.opponent.pushBox.width, this.opponent.pushBox.height,
+    )
 
-        if (this.position.x > context.canvas.width - WIDTH) {
-            this.position.x = context.canvas.width - WIDTH;
+    updateStageConstraints(time, context) {
+        if (this.position.x > context.canvas.width - this.pushBox.width) {
+            this.position.x = context.canvas.width - this.pushBox.width;
         }
 
-        if (this.position.x < WIDTH) {
-            this.position.x = WIDTH;
+        if (this.position.x < this.pushBox.width) {
+            this.position.x = this.pushBox.width;
+        }
+
+        if (this.hasCollidedWithOpp()) {
+            if (this.position.x <= this.opponent.position.x) {
+                this.position.x = Math.max(
+                    (this.opponent.position.x + this.opponent.pushBox.x) - (this.pushBox.x + this.pushBox.width),
+                    this.pushBox.width,
+                );
+
+                if (pushableStates.includes(this.opponent.currentState)) {
+                    this.opponent.position.x += PUSH_FRICTION * time.secondsPassed;
+                }
+            }
+
+            if (this.position.x >= this.opponent.position.x) {
+                this.position.x = Math.min(
+                    (this.opponent.position.x + this.opponent.pushBox.x + this.opponent.pushBox.width)
+                    + (this.pushBox.width + this.pushBox.x),
+                    context.canvas.width - this.pushBox.width,
+                );
+
+                if (pushableStates.includes(this.opponent.currentState)) {
+                    this.opponent.position.x -= PUSH_FRICTION * time.secondsPassed;
+                }
+            }
         }
     }
 
@@ -295,7 +350,7 @@ export class Fighter {
         if (time.previous > this.animationTimer + frameDelay) {
             this.animationTimer = time.previous;
 
-            if (frameDelay > 0) {
+            if (frameDelay > FrameDelay.FREEZE) {
                 this.animationFrame++;
                 this.pushBox = this.getPushBox(frameKey);
             }
@@ -312,7 +367,7 @@ export class Fighter {
 
         this.states[this.currentState].update(time, context);
         this.updateAnimation(time);
-        this.updateStageConstraints(context);
+        this.updateStageConstraints(time, context);
     }
 
     drawDebug(context) {

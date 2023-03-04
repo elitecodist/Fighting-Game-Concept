@@ -2,8 +2,8 @@ import { Fighter } from './Fighter.js';
 import { FighterState, PushBox, FrameDelay } from '../../constants/fighter.js';
 
 export class Karin extends Fighter {
-    constructor(x, y, direction, playerId) {
-        super('Karin', x, y, direction, playerId);
+    constructor(playerId) {
+        super('Karin', playerId);
 
         this.image = document.querySelector('img[alt="karin"]');
 

@@ -2,25 +2,27 @@ import { Ken } from "./entities/fighters/Ken.js"
 import { Karin } from "./entities/fighters/Karin.js"
 import { Stage } from "./entities/Stage.js"
 import { FpsCounter } from "./entities/FpsCounter.js";
-import { STAGE_FLOOR } from './constants/stage.js';
-import { FighterDirection } from "./constants/fighter.js";
+import { STAGE_MID_POINT, STAGE_PADDING } from './constants/stage.js';
 import { pollGamepads, registerGamepadEvents, registerKeyboardEvents } from "./InputHandler.js";
+import { Hud } from "./entities/overlays/Hud.js";
+import { Camera } from "./Camera.js";
+import { getContext } from "./util/context.js";
 
 export class UntitledCardGame {
     constructor() {
-        this.context = this.getContext();
-        this.fighters = [
-            new Ken(104, STAGE_FLOOR, FighterDirection.RIGHT, 0),
-            new Karin(280, STAGE_FLOOR, FighterDirection.LEFT, 1),
-        ];
+        this.context = getContext();
+        this.fighters = [new Ken(0), new Karin(1)];
 
         this.fighters[0].opponent = this.fighters[1];
         this.fighters[1].opponent = this.fighters[0];
+
+        this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - (this.context.canvas.width/2), 0, this.fighters);
         
         this.entities = [
             new Stage(),
             ...this.fighters,
-            new FpsCounter()
+            new FpsCounter(),
+            new Hud(this.fighters),
         ];
         
         this.frameTime = {
@@ -29,24 +31,17 @@ export class UntitledCardGame {
         };
     }
 
-    getContext() {
-        const canvasElem = document.querySelector('canvas');
-        const context = canvasElem.getContext('2d');
-        
-        context.imageSmoothingEnabled = false;
-
-        return context;
-    }
-
     update() {
+        this.camera.update(this.frameTime, this.context);
+
         for (const entity of this.entities) {
-            entity.update(this.frameTime, this.context);
+            entity.update(this.frameTime, this.context, this.camera);
         }
     }
 
     draw() {
         for (const entity of this.entities) {
-            entity.draw(this.context)
+            entity.draw(this.context, this.camera);
         }
     }
 

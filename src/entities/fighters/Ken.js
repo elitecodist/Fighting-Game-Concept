@@ -1,9 +1,9 @@
-import { FrameDelay, FighterState, PushBox } from '../../constants/fighter.js';
+import { FrameDelay, FighterState, PushBox, HurtBox } from '../../constants/fighter.js';
 import { Fighter } from './Fighter.js';
 
 export class Ken extends Fighter {
     constructor(playerId) {
-        super('Ken', playerId);
+        super(playerId);
 
         this.image = document.querySelector('img[alt="ken"]');
 
@@ -44,6 +44,7 @@ export class Ken extends Fighter {
             ['jRoll-5', [[[403, 1239, 59, 77], [30, 77]], PushBox.JUMP]],
             ['jRoll-6', [[[470, 1258, 115, 58], [58, 58]], PushBox.JUMP]],
             ['jRoll-7', [[[593, 1222, 79, 94], [40, 94]], PushBox.JUMP]],
+            ['jRoll-8', [[[676, 1202, 62, 114], [31, 114]], PushBox.JUMP]],
 
             ['jLand', [[[746, 1227, 63, 89], [32, 89]], PushBox.STAND]],
 
@@ -58,56 +59,127 @@ export class Ken extends Fighter {
             ['cTurn-2', [[[303, 891, 60, 65], [30, 65]], PushBox.CROUCH]],
             ['cTurn-3', [[[371, 891, 61, 65], [31, 65]], PushBox.CROUCH]],
             ['cTurn-1', [[[235, 891, 60, 65], [30, 65]], PushBox.CROUCH]],
+
+            ['jab-1', [[[31, 267, 77, 95], [39, 95]], PushBox.STAND]],
+            ['jab-2', [[[116, 266, 107, 96], [39, 96]], PushBox.STAND, HurtBox.NONE, [13, -86, 56, 15]]],
+            ['jab-3', [[[231, 267, 77, 95], [39, 95]], PushBox.STAND]],
+            ['jab-4', [[[316, 267, 66, 95], [33, 95]], PushBox.STAND]],
+            
+            ['strong-1', [[[428, 267, 65, 95], [33, 95]], PushBox.STAND]],
+            ['strong-2', [[[501, 267, 71, 95], [36, 95]], PushBox.STAND]],
+            ['strong-3', [[[580, 268, 109, 94], [36, 94]], PushBox.STAND, HurtBox.NONE, [15, -82, 59, 13]]],
+            ['strong-4', [[[697, 267, 71, 95], [36, 95]], PushBox.STAND]],
+            ['strong-5', [[[776, 267, 65, 95], [33, 95]], PushBox.STAND]],
+            ['strong-6', [[[849, 267, 66, 95], [33, 95]], PushBox.STAND]],
+            
+            ['headbutt-1', [[[24, 393, 86, 97], [39, 97]], PushBox.STAND]],
+            ['headbutt-2', [[[118, 393, 94, 97], [39, 97]], PushBox.STAND]],
+            ['headbutt-3', [[[220, 403, 92, 87], [39, 87]], PushBox.STAND, HurtBox.NONE, [34, -74, 27, 14]]],
+            ['headbutt-4', [[[320, 395, 74, 95], [37, 95]], PushBox.STAND]],
+            ['headbutt-5', [[[402, 396, 65, 94], [33, 94]], PushBox.STAND]],
+            ['headbutt-6', [[[475, 396, 66, 94], [33, 94]], PushBox.STAND]],
+
+            ['short-1', [[[24, 526, 83, 101], [42, 101]], PushBox.STAND]],
+            //starting here, heel is 0 to center
+            ['short-2', [[[115, 534, 59, 93], [30, 93]], PushBox.STAND]],
+            ['short-3', [[[182, 539, 101, 88], [38, 88]], PushBox.STAND, HurtBox.NONE, [6, -28, 57, 14]]],
+            ['short-4', [[[291, 538, 55, 89], [29, 89]], PushBox.STAND]],
+            ['short-5', [[[354, 526, 83, 101], [42, 101]], PushBox.STAND]],
+            ['short-6', [[[445, 533, 66, 94], [33, 94]], PushBox.STAND]],
+
+            //heel is 0 to center
+            ['forwardK-1', [[[519, 536, 67, 91], [34, 91]], PushBox.STAND]],
+            ['forwardK-2', [[[594, 521, 73, 106], [31, 106]], PushBox.STAND]],
+            ['forwardK-3', [[[675, 506, 86, 121], [31, 121]], PushBox.STAND]],
+            ['forwardK-4', [[[769, 528, 113, 99], [37, 99]], PushBox.STAND, HurtBox.NONE, [27, -80, 49, 16]]],
+            ['forwardK-5', [[[890, 539, 114, 88], [42, 88]], PushBox.STAND, HurtBox.NONE, [21, -37, 49, 16]]],
+            ['forwardK-6', [[[1012, 535, 94, 92], [38, 92]], PushBox.STAND]],
+            ['forwardK-7', [[[1114, 532, 74, 95], [37, 95]], PushBox.STAND]],
+
+            ['roundhouse-1', [[[24, 756, 68, 95], [34, 95]], PushBox.STAND]],
+            ['roundhouse-2', [[[100, 758, 76, 93], [38, 93]], PushBox.STAND]],
+            ['roundhouse-3', [[[184, 760, 81, 91], [41, 91]], PushBox.STAND]],
+            //33 footballs to center
+            ['roundhouse-4', [[[273, 758, 79, 93], [16, 93]], PushBox.STAND]],
+            ['roundhouse-5', [[[360, 755, 130, 96], [5, 96]], PushBox.STAND, HurtBox.NONE, [37, -58, 88, 14]]],
+            ['roundhouse-6', [[[498, 756, 107, 95], [-9, 95]], PushBox.STAND]],
+            ['roundhouse-7', [[[613, 758, 74, 93], [-16, 93]], PushBox.STAND]],
+            ['roundhouse-8', [[[695, 757, 72, 94], [-12, 94]], PushBox.STAND]],
+            ['roundhouse-9', [[[775, 756, 76, 95], [38, 95]], PushBox.STAND]],
+            ['roundhouse-10', [[[859, 757, 66, 94], [33, 94]], PushBox.STAND]],
         ]);
 
         this.animations = {
             [FighterState.IDLE]: [
-                ['idle-1', 68], ['idle-2', 68], ['idle-3', 68],
-                ['idle-4', 68], ['idle-5', 68], ['idle-6', 68]
+                ['idle-1', 4], ['idle-2', 4], ['idle-3', 4],
+                ['idle-4', 4], ['idle-5', 4], ['idle-6', 4]
             ],
             [FighterState.WALK_FORWARD]: [
-                ['forward-1', 65], ['forward-2', 65], ['forward-3', 65],
-                ['forward-4', 65], ['forward-5', 65], ['forward-6', 65],
+                ['forward-1', 4], ['forward-2', 4], ['forward-3', 4],
+                ['forward-4', 4], ['forward-5', 4], ['forward-6', 4],
             ],
             [FighterState.WALK_BACKWARD]: [
-                ['backward-1', 65], ['backward-2', 65], ['backward-3', 65],
-                ['backward-4', 65], ['backward-5', 65], ['backward-6', 65],
+                ['backward-1', 4], ['backward-2', 4], ['backward-3', 4],
+                ['backward-4', 4], ['backward-5', 4], ['backward-6', 4],
             ],
             [FighterState.JUMP_START]: [
-                ['jLand', 50], ['jLand', FrameDelay.TRANSITION]
+                ['jLand', 3], ['jLand', FrameDelay.TRANSITION]
             ],
             [FighterState.JUMP_NEUTRAL]: [
-                ['jNeutral-1', 150], ['jNeutral-2', 70], ['jNeutral-3', 70],
-                ['jNeutral-4', 70], ['jNeutral-5', 70], ['jNeutral-6', FrameDelay.FREEZE],
+                ['jNeutral-1', 7], ['jNeutral-2', 4], ['jNeutral-3', 4],
+                ['jNeutral-4', 6], ['jNeutral-5', 5], ['jNeutral-6', FrameDelay.FREEZE],
             ],
             [FighterState.JUMP_FORWARD]: [
-                ['jRoll-1', 70], ['jRoll-2', 50], ['jRoll-3', 50],
-                ['jRoll-4', 50], ['jRoll-5', 50], ['jRoll-6', 50],
-                ['jRoll-7', FrameDelay.FREEZE],
+                ['jRoll-1', 4], ['jRoll-2', 3], ['jRoll-3', 3],
+                ['jRoll-4', 3], ['jRoll-5', 3], ['jRoll-6', 4],
+                ['jRoll-7', 3], ['jRoll-8', FrameDelay.FREEZE],
             ],
             [FighterState.JUMP_BACKWARD]: [
-                ['jRoll-7', 200], ['jRoll-6', 50], ['jRoll-5', 50],
-                ['jRoll-4', 50], ['jRoll-3', 50], ['jRoll-2', 50],
+                ['jRoll-7', 12], ['jRoll-6', 3], ['jRoll-5', 3],
+                ['jRoll-4', 3], ['jRoll-3', 3], ['jRoll-2', 3],
                 ['jRoll-1', FrameDelay.FREEZE],
             ],
             [FighterState.JUMP_LAND]: [
-                ['jLand', 33], ['jLand', 117], ['jLand', FrameDelay.TRANSITION],
+                ['jLand', 2], ['jLand', 7], ['jLand', FrameDelay.TRANSITION],
             ],
             [FighterState.CROUCH]: [
                 ['crouch-3', FrameDelay.FREEZE],
             ],
             [FighterState.CROUCH_DOWN]: [
-                ['crouch-1', 30], ['crouch-2', 30], ['crouch-3', 30], ['crouch-3', FrameDelay.TRANSITION],
+                ['crouch-1', 2], ['crouch-2', 2], ['crouch-3', 2], ['crouch-3', FrameDelay.TRANSITION],
             ],
             [FighterState.CROUCH_RISE]: [
-                ['crouch-3', 30], ['crouch-2', 30], ['crouch-1', 30], ['crouch-1', FrameDelay.TRANSITION],
+                ['crouch-3', 2], ['crouch-2', 2], ['crouch-1', 2], ['crouch-1', FrameDelay.TRANSITION],
             ],
             [FighterState.IDLE_TURN]: [
-                ['iTurn-3', 33], ['iTurn-2', 33], ['iTurn-1', 33], ['iTurn-1', FrameDelay.TRANSITION],
+                ['iTurn-3', 2], ['iTurn-2', 2], ['iTurn-1', 2], ['iTurn-1', FrameDelay.TRANSITION],
             ],
             [FighterState.CROUCH_TURN]: [
-                ['cTurn-3', 33], ['cTurn-2', 33], ['cTurn-1', 33], ['cTurn-1', FrameDelay.TRANSITION],
-            ]
+                ['cTurn-3', 2], ['cTurn-2', 2], ['cTurn-1', 2], ['cTurn-1', FrameDelay.TRANSITION],
+            ],
+            [FighterState.FIVE_PUNCH]: [
+                ['jab-1', 2], ['jab-2', 4], ['jab-3', 4], ['jab-4', FrameDelay.TRANSITION],
+            ],
+            [FighterState.SIX_PUNCH]: [
+                ['strong-1', 1], ['strong-2', 2], ['strong-3', 4], ['strong-4', 3], ['strong-5', 3], ['strong-6', FrameDelay.TRANSITION],
+            ],
+            [FighterState.FOUR_PUNCH]: [
+                ['headbutt-1', 1], ['headbutt-2', 2], ['headbutt-3', 4], ['headbutt-4', 3], ['headbutt-5', 3], ['headbutt-6', FrameDelay.TRANSITION],
+            ],
+            [FighterState.FIVE_KICK]: [
+                ['short-1', 3], ['short-2', 3], ['short-3', 8], ['short-4', 4], ['short-5', 1], ['short-6', FrameDelay.TRANSITION],
+            ],
+            [FighterState.SIX_KICK]: [
+                ['forwardK-1', 2], ['forwardK-2', 4], ['forwardK-3', 5],
+                ['forwardK-4', 4], ['forwardK-5', 3], ['forwardK-6', 3],
+                ['forwardK-7', FrameDelay.TRANSITION],
+            ],
+            [FighterState.FOUR_KICK]: [
+                ['roundhouse-1', 3], ['roundhouse-2', 4], ['roundhouse-3', 5],
+                ['roundhouse-4', 4], ['roundhouse-5', 4], ['roundhouse-6', 3],
+                ['roundhouse-7', 3], ['roundhouse-8', 3], ['roundhouse-9', 3],
+                ['roundhouse-10', FrameDelay.TRANSITION],
+            ],
         };
 
         this.initialVelocity = {

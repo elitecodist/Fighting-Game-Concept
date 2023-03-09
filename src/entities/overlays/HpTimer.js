@@ -1,5 +1,5 @@
-import { MAX_HIT_POINTS, TIME_DELAY, TIME_FLASH_DELAY } from "../../constants/battle.js";
-import { WINDOW_WIDTH } from "../../constants/window.js";
+import { KO_ANIMATION, KO_FLASH_DELAY, MAX_HIT_POINTS, TIME_DELAY, TIME_FLASH_DELAY } from "../../constants/battle.js";
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from "../../constants/window.js";
 import { FPS } from "../../constants/game.js";
 import { gameState } from "../../state/gameState.js";
 import { drawFrame } from "../../util/context.js";
@@ -9,6 +9,7 @@ export class HpTimer {
         this.healthpng = document.querySelector('img[alt="hp-bar"]');
         this.timerpng = document.querySelector('img[alt="timer"]');
         this.kopng = document.querySelector('img[alt="ko"]');
+        this.kopng2 = document.querySelector('img[alt="ko2"]');
 
         this.time = 99;
         this.timeTimer = 0;
@@ -21,13 +22,17 @@ export class HpTimer {
             hitPoints: MAX_HIT_POINTS
         }]
 
+        this.koFrame = 0;
+        this.koAnimeTimer = 0;
+
         this.frames = new Map([
             ['hpPurp', [329, 195, 18, 13]],
             ['hpBlue', [329, 268, 18, 12]],
             ['hpGreen', [329, 340, 18, 13]],
             ['hpGray', [329, 413, 18, 13]],
 
-            ['ko', [976, 196, 145, 132]],
+            ['ko', [0, 0, 110, 104]],
+            ['ko2', [0, 0, 110, 104]],
 
             ['timer1', [119, 126, 12, 14]],
             ['timer2', [139, 126, 12, 14]],
@@ -67,14 +72,24 @@ export class HpTimer {
 
     updateHpBars(time) {
         for (const index in this.hpBars) {
-            if (this.hpBars[index].hitPoints <= gameState.fighters[index].maxHp) continue;
-            this.hpBars[index].hitPoints = Math.max(0, this.hpBars[index].hitPoints - (time.secondsPassed * FPS));
+            if (this.hpBars[index].hitPoints <= gameState.fighters[index].hitPoints) continue;
+            // this.hpBars[index].hitPoints = Math.max(0, this.hpBars[index].hitPoints - (time.secondsPassed * FPS));
+            this.hpBars[index].hitPoints = Math.max(0, gameState.fighters[index].hitPoints);
         }
+    }
+
+    updateKoIcon(time) {
+        if (this.hpBars.every((hpBar) => hpBar.hitPoints > 0)) return;
+        if (time.previous < this.koAnimationTimer + KO_FLASH_DELAY[this.koFrame]) return;
+
+        this.koFrame = 1 - this.koFrame;
+        this.koAnimationTimer = time.previous;
     }
 
     update(time) {
         this.updateTime(time);
         this.updateHpBars(time);
+        this.updateKoIcon(time);
     }
 
     drawHpBars(context) {
@@ -87,17 +102,17 @@ export class HpTimer {
                 this.drawFrame(context, this.healthpng, 'hpPurp', i * 18, 0);
             }
         } else if (this.hpBars[0].hitPoints >= 10) {
-            for (let i = 0; i < missingHp1-10; i++) {
+            for (let i = 0; i < missingHp1 - 10; i++) {
                 this.drawFrame(context, this.healthpng, 'hpGreen', i * 18, 0);
             }
-            for (let i = missingHp1-10; i < 10; i++) {
+            for (let i = missingHp1 - 10; i < 10; i++) {
                 this.drawFrame(context, this.healthpng, 'hpBlue', i * 18, 0);
             }
         } else {
-            for (let i = 0; i < missingHp1-20; i++) {
+            for (let i = 0; i < missingHp1 - 20; i++) {
                 this.drawFrame(context, this.healthpng, 'hpGray', i * 18, 0);
             }
-            for (let i = missingHp1-20; i < 10; i++) {
+            for (let i = missingHp1 - 20; i < 10; i++) {
                 this.drawFrame(context, this.healthpng, 'hpGreen', i * 18, 0);
             }
         }
@@ -111,18 +126,39 @@ export class HpTimer {
                 this.drawFrame(context, this.healthpng, 'hpPurp', (WINDOW_WIDTH - 18) - (i * 18), 0);
             }
         } else if (this.hpBars[1].hitPoints >= 10) {
-            for (let i = 0; i < missingHp2-10; i++) {
+            for (let i = 0; i < missingHp2 - 10; i++) {
                 this.drawFrame(context, this.healthpng, 'hpGreen', (WINDOW_WIDTH - 18) - (i * 18), 0);
             }
-            for (let i = missingHp2-10; i < 10; i++) {
+            for (let i = missingHp2 - 10; i < 10; i++) {
                 this.drawFrame(context, this.healthpng, 'hpBlue', (WINDOW_WIDTH - 18) - (i * 18), 0);
             }
         } else {
-            for (let i = 0; i < missingHp2-20; i++) {
+            for (let i = 0; i < missingHp2 - 20; i++) {
                 this.drawFrame(context, this.healthpng, 'hpGray', (WINDOW_WIDTH - 18) - (i * 18), 0);
             }
-            for (let i = missingHp2-20; i < 10; i++) {
+            for (let i = missingHp2 - 20; i < 10; i++) {
                 this.drawFrame(context, this.healthpng, 'hpGreen', (WINDOW_WIDTH - 18) - (i * 18), 0);
+            }
+        }
+
+        if (missingHp1 >= 30) {
+            switch (this.koFrame) {
+                case 0:
+                    this.drawFrame(context, this.kopng, KO_ANIMATION[this.koFrame], (WINDOW_WIDTH / 4), (WINDOW_HEIGHT / 2));
+                    break;
+                case 1:
+                    this.drawFrame(context, this.kopng2, KO_ANIMATION[this.koFrame], (WINDOW_WIDTH / 4), (WINDOW_HEIGHT / 2));
+                    break;
+            }
+        }
+        if (missingHp2 >= 30) {
+            switch (this.koFrame) {
+                case 0:
+                    this.drawFrame(context, this.kopng, KO_ANIMATION[this.koFrame], WINDOW_WIDTH - (WINDOW_WIDTH / 4), (WINDOW_HEIGHT / 2));
+                    break;
+                case 1:
+                    this.drawFrame(context, this.kopng2, KO_ANIMATION[this.koFrame], WINDOW_WIDTH - (WINDOW_WIDTH / 4), (WINDOW_HEIGHT / 2));
+                    break;
             }
         }
     }
@@ -135,5 +171,7 @@ export class HpTimer {
 
         this.drawFrame(context, this.timerpng, `timer${timeString.charAt(0)}`, 181, 0);
         this.drawFrame(context, this.timerpng, `timer${timeString.charAt(1)}`, 191, 0);
+
+
     }
 }

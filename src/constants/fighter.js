@@ -22,6 +22,21 @@ export const FighterAttackStrength = {
     HEAVY: 'heavy',
 }
 
+export const FighterAttackBaseData = {
+    [FighterAttackStrength.LIGHT]: {
+        score: 0,
+        damage: 1,
+    },
+    [FighterAttackStrength.MEDIUM]: {
+        score: 0,
+        damage: 1,
+    },
+    [FighterAttackStrength.HEAVY]: {
+        score: 0,
+        damage: 1,
+    },
+}
+
 export const FighterState = {
     IDLE: 'idle',
     WALK_FORWARD: 'walkForward',

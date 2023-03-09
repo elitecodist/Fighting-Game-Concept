@@ -2,12 +2,13 @@ import { Control } from "../../constants/control.js";
 import {
     FighterDirection, FighterState,
     FIGHTER_START_DISTANCE, FrameDelay,
-    PUSH_FRICTION, FighterAttackType
+    PUSH_FRICTION, FighterAttackType, FighterAttackStrength, FighterAttackBaseData
 } from "../../constants/fighter.js";
 import { FRAME_TIME } from "../../constants/game.js";
 import { STAGE_FLOOR, STAGE_MID_POINT, STAGE_PADDING } from "../../constants/stage.js";
 import * as control from "../../InputHandler.js";
 import { boxOverlap, boxOverlapHelp, getActualBoxDimensions } from "../../util/collision.js";
+import { gameState } from "../../state/gameState.js";
 
 const pushableStates = [
     FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_NEUTRAL,
@@ -25,6 +26,8 @@ export class Fighter {
         this.initialVelocity = {};
         this.direction = playerId === 0 ? FighterDirection.RIGHT : FighterDirection.LEFT;
         this.gravity = 0;
+
+        this.attackStruck = false;
 
         this.frames = new Map();
         this.animationFrame = 0;
@@ -143,6 +146,7 @@ export class Fighter {
             },
             [FighterState.FIVE_PUNCH]: {
                 attackType: FighterAttackType.RED,
+                attackStrength: FighterAttackStrength.LIGHT,
                 init: this.handle5PInit,
                 update: this.handle5PState,
                 validFrom: [
@@ -152,6 +156,7 @@ export class Fighter {
             },
             [FighterState.SIX_PUNCH]: {
                 attackType: FighterAttackType.RED,
+                attackStrength: FighterAttackStrength.MEDIUM,
                 init: this.handle6PInit,
                 update: this.handle6PState,
                 validFrom: [
@@ -161,6 +166,7 @@ export class Fighter {
             },
             [FighterState.FOUR_PUNCH]: {
                 attackType: FighterAttackType.RED,
+                attackStrength: FighterAttackStrength.HEAVY,
                 init: this.handle4PInit,
                 update: this.handle4PState,
                 validFrom: [
@@ -170,6 +176,7 @@ export class Fighter {
             },
             [FighterState.FIVE_KICK]: {
                 attackType: FighterAttackType.GREEN,
+                attackStrength: FighterAttackStrength.LIGHT,
                 init: this.handle5KInit,
                 update: this.handle5KState,
                 validFrom: [
@@ -179,6 +186,7 @@ export class Fighter {
             },
             [FighterState.SIX_KICK]: {
                 attackType: FighterAttackType.GREEN,
+                attackStrength: FighterAttackStrength.MEDIUM,
                 init: this.handle6KInit,
                 update: this.handle6KState,
                 validFrom: [
@@ -188,6 +196,7 @@ export class Fighter {
             },
             [FighterState.FOUR_KICK]: {
                 attackType: FighterAttackType.GREEN,
+                attackStrength: FighterAttackStrength.HEAVY,
                 init: this.handle4KInit,
                 update: this.handle4KState,
                 validFrom: [
@@ -292,6 +301,7 @@ export class Fighter {
 
     handleIdleInit = () => {
         this.resetVelocities();
+        this.attackStruck = false;
     }
     handleIdleState = () => {
         if (control.isUp(this.playerId))
@@ -527,9 +537,8 @@ export class Fighter {
 
     }
 
-    updateAttackBoxCollided(time) {
-        if (!this.states[this.currentState].attackType) return;
-
+    updateAttackBoxCollided() {
+        if (!this.states[this.currentState].attackType || this.attackStruck) return;
 
         const actualHitBox = getActualBoxDimensions(this.position, this.direction, this.boxes.hit);
 
@@ -545,8 +554,14 @@ export class Fighter {
 
             const hurtIndex = this.opponent.boxes.hurt.indexOf(hurt);
             const hurtName = ['head', 'body', 'legs']
+            const strength = this.states[this.currentState].attackStrength;
 
-            console.log(`hit ${hurtName[hurtIndex]}`)
+            gameState.fighters[this.opponent.playerId].hitPoints -= FighterAttackBaseData[strength].damage;
+            
+            console.log(`hit ${hurtName[hurtIndex]}: ${strength}`)
+            this.attackStruck = true;
+            return;
+
         }
     }
 

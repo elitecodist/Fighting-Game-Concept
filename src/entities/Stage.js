@@ -2,7 +2,10 @@ import { drawFrame } from "../util/context.js";
 
 export class Stage {
     constructor(){
-        this.image = document.querySelector('img[alt="background"]')
+        this.image = document.querySelector('img[alt="background"]');
+        
+        this.music = document.querySelector('audio#hypeboi');
+        this.music.play();
 
         this.frames = new Map([
             ['background', [0, 0, 621, 240]]

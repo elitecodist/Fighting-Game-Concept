@@ -13,7 +13,6 @@ export class HitSplash {
     }
 
     update(time) {
-        console.log(this.frames.length)
         if (time.previous < this.animationTimer + this.frames.length * FRAME_TIME) return;
         this.animationFrame += 1;
         this.animationTimer = time.previous;

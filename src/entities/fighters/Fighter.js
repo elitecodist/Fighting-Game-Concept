@@ -578,7 +578,8 @@ export class Fighter {
         this.position.x += (this.velocity.x * this.direction) * time.secondsPassed;
         this.position.y += this.velocity.y * time.secondsPassed;
 
-        this.states[this.currentState].update(time, context);
+        const temp = this.states[this.currentState].update
+        temp(time, context);
         this.updateAnimation(time);
         this.updateStageConstraints(time, context, camera);
         this.updateAttackBoxCollided(time);

@@ -1,55 +1,57 @@
-import { KO_ANIMATION, KO_FLASH_DELAY, MAX_HIT_POINTS, TIME_DELAY, TIME_FLASH_DELAY } from "../../constants/battle.js";
+import {
+    KO_ANIMATION, KO_FLASH_DELAY,
+    MAX_HIT_POINTS, TIME_DELAY,
+    TIME_FLASH_DELAY
+} from "../../constants/battle.js";
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from "../../constants/window.js";
 import { FPS } from "../../constants/game.js";
 import { gameState } from "../../state/gameState.js";
 import { drawFrame } from "../../util/context.js";
 
 export class HpTimer {
+
+    time = 99;
+    timeTimer = 0;
+
+    hpBars = [{
+        timer: 0,
+        hitPoints: MAX_HIT_POINTS,
+    }, {
+        timer: 0,
+        hitPoints: MAX_HIT_POINTS
+    }]
+
+    koFrame = 0;
+    koAnimeTimer = 0;
+
+    frames = new Map([
+        ['hpPurp', [329, 195, 18, 13]],
+        ['hpBlue', [329, 268, 18, 12]],
+        ['hpGreen', [329, 340, 18, 13]],
+        ['hpGray', [329, 413, 18, 13]],
+
+        ['ko', [0, 0, 110, 104]],
+        ['ko2', [0, 0, 110, 104]],
+
+        ['timer1', [119, 126, 12, 14]],
+        ['timer2', [139, 126, 12, 14]],
+        ['timer3', [159, 126, 12, 14]],
+        ['timer4', [179, 126, 12, 14]],
+        ['timer5', [199, 126, 12, 14]],
+        ['timer6', [119, 156, 12, 14]],
+        ['timer7', [139, 156, 12, 14]],
+        ['timer8', [159, 156, 12, 14]],
+        ['timer9', [179, 156, 12, 14]],
+        ['timer0', [199, 156, 12, 14]],
+    ]);
     constructor() {
         this.healthpng = document.querySelector('img[alt="hp-bar"]');
         this.timerpng = document.querySelector('img[alt="timer"]');
         this.kopng = document.querySelector('img[alt="ko"]');
         this.kopng2 = document.querySelector('img[alt="ko2"]');
-
-        this.time = 99;
-        this.timeTimer = 0;
-
-        this.hpBars = [{
-            timer: 0,
-            hitPoints: MAX_HIT_POINTS,
-        }, {
-            timer: 0,
-            hitPoints: MAX_HIT_POINTS
-        }]
-
-        this.koFrame = 0;
-        this.koAnimeTimer = 0;
-
-        this.frames = new Map([
-            ['hpPurp', [329, 195, 18, 13]],
-            ['hpBlue', [329, 268, 18, 12]],
-            ['hpGreen', [329, 340, 18, 13]],
-            ['hpGray', [329, 413, 18, 13]],
-
-            ['ko', [0, 0, 110, 104]],
-            ['ko2', [0, 0, 110, 104]],
-
-            ['timer1', [119, 126, 12, 14]],
-            ['timer2', [139, 126, 12, 14]],
-            ['timer3', [159, 126, 12, 14]],
-            ['timer4', [179, 126, 12, 14]],
-            ['timer5', [199, 126, 12, 14]],
-            ['timer6', [119, 156, 12, 14]],
-            ['timer7', [139, 156, 12, 14]],
-            ['timer8', [159, 156, 12, 14]],
-            ['timer9', [179, 156, 12, 14]],
-            ['timer0', [199, 156, 12, 14]],
-        ]);
-
         //Name TAGS
 
         this.names = gameState.fighters.map(({ id }) => `tag-${id.toLowerCase()}`);
-
     }
 
     drawFrame(context, image, frameKey, x, y, direction = 1) {

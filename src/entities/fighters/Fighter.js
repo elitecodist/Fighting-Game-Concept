@@ -2,13 +2,14 @@ import { Control } from "../../constants/control.js";
 import {
     FighterDirection, FighterState,
     FIGHTER_START_DISTANCE, FrameDelay,
-    PUSH_FRICTION, FighterAttackType, FighterAttackStrength, FighterAttackBaseData
+    PUSH_FRICTION, FighterAttackType, FighterAttackStrength,
 } from "../../constants/fighter.js";
 import { FRAME_TIME } from "../../constants/game.js";
 import { STAGE_FLOOR, STAGE_MID_POINT, STAGE_PADDING } from "../../constants/stage.js";
 import * as control from "../../InputHandler.js";
 import { boxOverlap, boxOverlapHelp, getActualBoxDimensions } from "../../util/collision.js";
 import { gameState } from "../../state/gameState.js";
+import { DEBUG_drawCollisionInfo } from "../../util/fighterDebug.js";
 
 const pushableStates = [
     FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_NEUTRAL,
@@ -16,7 +17,7 @@ const pushableStates = [
 ]
 
 export class Fighter {
-    constructor(playerId) {
+    constructor(playerId, onAttackHit) {
         this.playerId = playerId;
         this.position = {
             x: STAGE_MID_POINT + STAGE_PADDING + (playerId === 0 ? -FIGHTER_START_DISTANCE : FIGHTER_START_DISTANCE),
@@ -37,6 +38,7 @@ export class Fighter {
         this.image = new Image();
 
         this.opponent;
+        this.onAttackHit = onAttackHit;
 
         this.boxes = {
             push: { x: 0, y: 0, width: 0, height: 0 },
@@ -556,8 +558,15 @@ export class Fighter {
             const hurtName = ['head', 'body', 'legs']
             const strength = this.states[this.currentState].attackStrength;
 
-            gameState.fighters[this.opponent.playerId].hitPoints -= FighterAttackBaseData[strength].damage;
-            
+            const hitPosition = {
+                x: (actualHitBox.x + (actualHitBox.width / 2) + actualOpponentHurtBox.x + (actualOpponentHurtBox.width / 2)) / 2,
+                y: (actualHitBox.y + (actualHitBox.height / 2) + actualOpponentHurtBox.y + (actualOpponentHurtBox.height / 2)) / 2,
+            };
+            hitPosition.x -= 4 - Math.random() * 8;
+            hitPosition.y -= 4 - Math.random() * 8;
+
+            this.onAttackHit(this.playerId, this.opponent.playerId, hitPosition, strength);
+
             console.log(`hit ${hurtName[hurtIndex]}: ${strength}`)
             this.attackStruck = true;
             return;
@@ -573,54 +582,6 @@ export class Fighter {
         this.updateAnimation(time);
         this.updateStageConstraints(time, context, camera);
         this.updateAttackBoxCollided(time);
-    }
-
-    drawDebugBox(context, camera, dimensions, baseColor) {
-        if (!Array.isArray(dimensions)) return;
-
-        const [x = 0, y = 0, width = 0, height = 0] = dimensions;
-
-        context.beginPath();
-        context.strokeStyle = baseColor + 'AA';
-        context.fillStyle = baseColor + '44';
-        context.fillRect(
-            Math.floor(this.position.x + (x * this.direction) - camera.position.x) + 0.5,
-            Math.floor(this.position.y + y - camera.position.y) + 0.5,
-            width * this.direction,
-            height,
-        );
-        context.rect(
-            Math.floor(this.position.x + (x * this.direction) - camera.position.x) + 0.5,
-            Math.floor(this.position.y + y - camera.position.y) + 0.5,
-            width * this.direction,
-            height,
-        );
-        context.stroke();
-    }
-
-    drawDebug(context, camera) {
-        const [frameKey] = this.animations[this.currentState][this.animationFrame];
-        const boxes = this.getBoxes(frameKey);
-
-        context.lineWidth = 1;
-
-        //Push Boxes
-        this.drawDebugBox(context, camera, Object.values(boxes.push), '#55FF55');
-        //Hurt Boxes
-        for (const hurtBox of boxes.hurt) {
-            this.drawDebugBox(context, camera, hurtBox, '#7777FF');
-        }
-        //Hit Box
-        this.drawDebugBox(context, camera, Object.values(boxes.hit), '#FF0000');
-
-        //Origin X
-        context.beginPath();
-        context.strokeStyle = 'white';
-        context.moveTo(Math.floor(this.position.x - camera.position.x) - 4, Math.floor(this.position.y - camera.position.y) - 0.5);
-        context.lineTo(Math.floor(this.position.x - camera.position.x) + 5, Math.floor(this.position.y - camera.position.y) - 0.5);
-        context.moveTo(Math.floor(this.position.x - camera.position.x) + 0.5, Math.floor(this.position.y - camera.position.y) - 5);
-        context.lineTo(Math.floor(this.position.x - camera.position.x) + 0.5, Math.floor(this.position.y - camera.position.y) + 4);
-        context.stroke();
     }
 
     draw(context, camera) {
@@ -641,6 +602,6 @@ export class Fighter {
         );
         context.setTransform(1, 0, 0, 1, 0, 0);
 
-        this.drawDebug(context, camera);
+        DEBUG_drawCollisionInfo(this, context, camera);
     }
 }

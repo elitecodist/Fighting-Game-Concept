@@ -3,9 +3,8 @@ import { Karin } from "./entities/fighters/Karin.js"
 import { Stage } from "./entities/Stage.js"
 import { FpsCounter } from "./entities/FpsCounter.js";
 import { STAGE_MID_POINT, STAGE_PADDING } from './constants/stage.js';
-import { pollGamepads, registerGamepadEvents, registerKeyboardEvents } from "./InputHandler.js";
+import { pollGamepads, registerGamepadEvents, registerKeyboardEvents } from "./engine/inputHandler.js";
 import { HpTimer } from "./entities/overlays/HpTimer.js";
-import { Camera } from "./Camera.js";
 import { getContext } from "./util/context.js";
 import { BattleScene } from "./scenes/BattleScene.js";
 

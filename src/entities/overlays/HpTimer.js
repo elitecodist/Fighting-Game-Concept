@@ -3,7 +3,7 @@ import {
     MAX_HIT_POINTS, TIME_DELAY,
     TIME_FLASH_DELAY
 } from "../../constants/battle.js";
-import { WINDOW_HEIGHT, WINDOW_WIDTH } from "../../constants/window.js";
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from "../../constants/settings.js";
 import { FPS } from "../../constants/game.js";
 import { gameState } from "../../state/gameState.js";
 import { drawFrame } from "../../util/context.js";

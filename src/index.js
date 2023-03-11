@@ -15,5 +15,5 @@ window.addEventListener('load', function() {
     // populateMoveDropdown();
     this.window.addEventListener('click', function() {
         new UntitledCardGame().start();
-    })
+    }, { once: true });
 });

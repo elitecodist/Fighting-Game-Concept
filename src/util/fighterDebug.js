@@ -33,7 +33,7 @@ function drawBox(context, camera, position, direction, dimensions, color) {
     context.stroke();
 }
 
-export function DEBUG_drawCollisionInfo(fighter, context, camera) {
+export function drawCollisionInfo(fighter, context, camera) {
     const { position, direction, boxes } = fighter;
 
     context.lineWidth = 1;
@@ -41,7 +41,7 @@ export function DEBUG_drawCollisionInfo(fighter, context, camera) {
     //Push Boxes
     drawBox(context, camera, position, direction, Object.values(boxes.push), '#55FF55');
     //Hurt Boxes
-    for (const hurtBox of boxes.hurt) {
+    for (const hurtBox of Object.values(boxes.hurt)) {
         drawBox(context, camera, position, direction, hurtBox, '#7777FF');
     }
     //Hit Box
@@ -49,4 +49,8 @@ export function DEBUG_drawCollisionInfo(fighter, context, camera) {
 
     drawCross(context, camera, position, '#FFFFFF');
 
+}
+
+export function logHit(fighter, hitStrength, hitLocation) {
+    console.log(`hit ${hitLocation}: ${hitStrength}`)
 }

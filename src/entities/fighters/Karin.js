@@ -1,5 +1,8 @@
 import { Fighter } from './Fighter.js';
-import { FighterState, PushBox, HurtBox, FrameDelay } from '../../constants/fighter.js';
+import { 
+    FighterState, PushBox, HurtBox,
+    FrameDelay, FIGHTER_HURT_DELAY 
+} from '../../constants/fighter.js';
 
 export class Karin extends Fighter {
     constructor(playerId, onAttackHit) {
@@ -112,6 +115,18 @@ export class Karin extends Fighter {
             // ['roundhouse-8', [[[], []], PushBox.STAND]],
             // ['roundhouse-9', [[[], []], PushBox.STAND]],
             // ['roundhouse-10', [[[], []], PushBox.STAND]],
+
+            //27 right toe to center
+            ['hit-head-1', [[[16, 5086, 86, 84], [43, 84]], PushBox.STAND, HurtBox.STAND]],
+            ['hit-head-2', [[[110, 5084, 92, 86], [43, 86]], PushBox.STAND, HurtBox.STAND]],
+            ['hit-head-3', [[[210, 5085, 100, 85], [61, 85]], PushBox.STAND, HurtBox.STAND]],
+            ['hit-head-4', [[[318, 5086, 103, 84], [65, 84]], PushBox.STAND, HurtBox.STAND]],
+
+            //34 right toe to center
+            ['hit-body-1', [[[429, 5087, 86, 83], [43, 83]], PushBox.STAND, HurtBox.STAND]],
+            ['hit-body-2', [[[523, 5087, 81, 83], [46, 83]], PushBox.STAND, HurtBox.STAND]],
+            ['hit-body-3', [[[612, 5088, 78, 82], [54, 82]], PushBox.STAND, HurtBox.STAND]],
+            ['hit-body-4', [[[698, 5086, 83, 84], [65, 84]], PushBox.STAND, HurtBox.STAND]],
         ]);
 
         this.animations = {
@@ -181,6 +196,29 @@ export class Karin extends Fighter {
                 ['forwardK-1', 3], ['forwardK-2', 4], ['forwardK-3', 5],
                 ['forwardK-4', 5], ['forwardK-5', 4], ['forwardK-6', 3],
                 ['forwardK-7', 2], ['forwardK-8', FrameDelay.TRANSITION],
+            ],
+            [FighterState.HURT_HEAD_LIGHT]: [
+                ['hit-head-1', FIGHTER_HURT_DELAY], ['hit-head-1', 3], ['hit-head-2', 8], ['hit-head-2', FrameDelay.TRANSITION],
+            ],
+            [FighterState.HURT_HEAD_MEDIUM]: [
+                ['hit-head-1', FIGHTER_HURT_DELAY], ['hit-head-1', 3], ['hit-head-2', 4],
+                ['hit-head-3', 9], ['hit-head-3', FrameDelay.TRANSITION],
+            ],
+            [FighterState.HURT_HEAD_HEAVY]: [
+                ['hit-head-2', FIGHTER_HURT_DELAY], ['hit-head-2', 7], ['hit-head-3', 4],
+                ['hit-head-4', 9], ['hit-head-4', FrameDelay.TRANSITION],
+            ],
+            [FighterState.HURT_BODY_LIGHT]: [
+                ['hit-body-1', FIGHTER_HURT_DELAY], ['hit-body-1', 11],
+                ['hit-body-1', FrameDelay.TRANSITION],
+            ],
+            [FighterState.HURT_BODY_MEDIUM]: [
+                ['hit-body-1', FIGHTER_HURT_DELAY], ['hit-body-1', 7],
+                ['hit-body-2', 9], ['hit-body-2', FrameDelay.TRANSITION],
+            ],
+            [FighterState.HURT_BODY_HEAVY]: [
+                ['hit-body-2', FIGHTER_HURT_DELAY], ['hit-body-2', 3], ['hit-body-3', 4],
+                ['hit-body-4', 4], ['hit-body-4', 9], ['hit-body-4', FrameDelay.TRANSITION],
             ],
         };
 

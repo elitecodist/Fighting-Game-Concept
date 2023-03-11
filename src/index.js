@@ -13,6 +13,7 @@ import { UntitledCardGame } from "./UntitledCardGame.js";
 
 window.addEventListener('load', function() {
     // populateMoveDropdown();
-
-    new UntitledCardGame().start();
+    this.window.addEventListener('click', function() {
+        new UntitledCardGame().start();
+    })
 });

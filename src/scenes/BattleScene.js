@@ -25,7 +25,7 @@ export class BattleScene {
             new FpsCounter(),
         ];
 
-        this.entities = [];
+        // this.entities = [];
 
         this.startRound();
     }

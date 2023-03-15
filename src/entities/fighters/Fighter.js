@@ -667,7 +667,7 @@ export class Fighter {
                 { x, y, width, height },
             );
 
-            if (!boxOverlapHelp(actualHitBox, actualOpponentHurtBox)) return;
+            if (!boxOverlapHelp(actualHitBox, actualOpponentHurtBox)) continue;
 
             playSound(this.soundHits[attackStrength][attackType], VOLUME);
 

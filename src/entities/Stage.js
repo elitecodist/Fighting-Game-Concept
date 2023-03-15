@@ -7,8 +7,8 @@ export class Stage {
         this.image = document.querySelector('img[alt="background"]');
         
         this.music = document.querySelector('audio#hypeboi');
-        // playSound(this.music, VOLUME);
-        playSound(this.music, 0);
+        playSound(this.music, VOLUME);
+        // playSound(this.music, 0);
 
         this.frames = new Map([
             ['background', [0, 0, 621, 240]]

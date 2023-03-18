@@ -18,14 +18,16 @@ export class Cards {
 
     frames = new Map([
         ['redC', [0, 0, 29, 36]],
+        ['greenC', [29, 0, 29, 36]],
+        ['blueC', [58, 0, 29, 36]],
     ]);
-    constructor() {
-        this.redCpng = document.querySelector('img[alt="red-card"]');
+    constructor(fighters) {
+        this.cardspng = document.querySelector('img[alt="cards"]');
 
         this.decks = [
             [
-                'redC', 'redC', 'redC', 'redC', 'redC',
-                'redC', 'redC', 'redC', 'redC', 'redC',
+                'redC', 'redC', 'greenC', 'blueC', 'redC',
+                'redC', 'redC', 'greenC', 'blueC', 'redC',
             ],
             []
         ]
@@ -78,13 +80,13 @@ export class Cards {
     }
 
     drawP1Cards(context) {
-        this.drawFrame(context, this.redCpng, this.p1Hand[this.p1Pos[1]-1], -8, 164);//1
-        this.drawFrame(context, this.redCpng, this.p1Hand[this.p1Pos[1]], 5, 171);//2
+        this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos[1]-1], -8, 164);//1
+        this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos[1]], 5, 171);//2
 
-        this.drawFrame(context, this.redCpng, this.p1Hand[this.p1Pos[0]+2], 37, 199);//4
-        this.drawFrame(context, this.redCpng, this.p1Hand[this.p1Pos[0]+1], 27, 187);//3
+        this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos[0]+2], 37, 199);//4
+        this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos[0]+1], 27, 187);//3
 
-        this.drawFrame(context, this.redCpng, this.p1ActiveCard, 17, 179);//active
+        this.drawFrame(context, this.cardspng, this.p1ActiveCard, 17, 179);//active
     }
 
     draw(context) {

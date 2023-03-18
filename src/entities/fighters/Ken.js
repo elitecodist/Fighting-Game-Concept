@@ -5,6 +5,11 @@ export class Ken extends Fighter {
     constructor(playerId, onAttackHit) {
         super(playerId, onAttackHit);
 
+        this.deck = [
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+        ];
+
         this.image = document.querySelector('img[alt="ken"]');
 
         this.frames = new Map([

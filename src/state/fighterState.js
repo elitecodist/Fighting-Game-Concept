@@ -4,5 +4,9 @@ export const createDefaultFighterState = (id) => ({
     id,
     score: 1,
     battles: 0,
-    hitPoints: MAX_HIT_POINTS
+    hitPoints: MAX_HIT_POINTS,
+    deck: [
+        'redC', 'redC', 'greenC', 'blueC', 'redC',
+        'redC', 'redC', 'greenC', 'blueC', 'redC',
+    ],
 });

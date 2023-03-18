@@ -24,19 +24,14 @@ export class Cards {
     constructor(fighters) {
         this.cardspng = document.querySelector('img[alt="cards"]');
 
-        this.decks = [
-            [
-                'redC', 'redC', 'greenC', 'blueC', 'redC',
-                'redC', 'redC', 'greenC', 'blueC', 'redC',
-            ],
-            []
-        ]
+        // this.decks = [
+        //     [fighters[0] shuffled],
+        //     []
+        // ]
 
-        this.p1Hand = this.decks[0].slice(0,10);
-        this.p1Pos = [0, 9]
-        this.p1ActiveCard = this.p1Hand[this.p1Pos[0]]
-
-        this.p2Hand = this.decks[1];
+        this.p1Hand = fighters[0]['deck'].slice(0,10);
+        this.p1pos = [0, p1inHand + 1]
+        fighters[0].activeCard = this.p1Hand[0]
     }
 
     drawFrame(context, image, frameKey, x, y, direction = 1) {

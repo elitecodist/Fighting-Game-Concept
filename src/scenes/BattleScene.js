@@ -15,17 +15,12 @@ export class BattleScene {
     camera = undefined;
     shadows = [];
     entities = [];
+    overlays = [];
     hurtTimer = undefined;
     fighterDrawOrder = [0, 1];
 
     constructor() {
         this.stage = new Stage()
-
-        this.overlays = [
-            new HpTimer(this.fighters),
-            new Cards(),
-            new FpsCounter(),
-        ];
 
         // this.entities = [];
 
@@ -80,8 +75,15 @@ export class BattleScene {
         this.entities.splice(index, 1);
     }
 
-    startRound () {
+    startRound() {
         this.fighters = this.getFighterEntities();
+
+        this.overlays = [
+            new HpTimer(this.fighters),
+            new Cards(this.fighters),
+            new FpsCounter(),
+        ];
+        
         // this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - (this.context.canvas.width/2), 0, this.fighters);
         this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - 192, 0, this.fighters);
     }
@@ -96,7 +98,7 @@ export class BattleScene {
 
     updateFighters(time, context) {
         for (const fighter of this.fighters) {
-            if (time.previous < this.hurtTimer){
+            if (time.previous < this.hurtTimer) {
                 fighter.updateHurtShake(time, this.hurtTimer);
             } else {
                 fighter.update(time, context, this.camera);

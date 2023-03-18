@@ -67,7 +67,6 @@ export class Fighter {
 
         this.currentState = FighterState.IDLE;
         this.activeCard = undefined;
-        this.handPos = [0, 9]
 
         this.opponent = undefined;
         this.onAttHit = onAttHit;

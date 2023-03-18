@@ -114,7 +114,10 @@ export class BattleScene {
 
     updateOverlays(time, context) {
         for (const overlay of this.overlays) {
-            overlay.update(time, context, this.camera);
+            if (overlay.constructor.name === "Cards")
+                overlay.update(time, this.fighters);
+            else
+                overlay.update(time, context, this.camera);
         }
     }
 

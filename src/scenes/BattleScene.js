@@ -1,5 +1,6 @@
 import { FpsCounter } from "../entities/FpsCounter.js";
 import { HpTimer } from "../entities/overlays/HpTimer.js";
+import { Cards } from "../entities/overlays/Cards.js";
 import { Camera } from "../engine/Camera.js"
 import { Ken, Karin } from "../entities/fighters/index.js";
 import { STAGE_MID_POINT, STAGE_PADDING } from "../constants/stage.js";
@@ -22,6 +23,7 @@ export class BattleScene {
 
         this.overlays = [
             new HpTimer(this.fighters),
+            new Cards(),
             new FpsCounter(),
         ];
 

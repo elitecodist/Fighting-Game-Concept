@@ -66,6 +66,8 @@ export class Fighter {
         this.slideFriction = 0;
 
         this.currentState = FighterState.IDLE;
+        this.activeCard = undefined;
+
         this.opponent = undefined;
         this.onAttHit = onAttHit;
 
@@ -79,6 +81,7 @@ export class Fighter {
             }
         }
 
+
         this.states = {
             [FighterState.IDLE]: {
                 init: this.handleIdleInit,
@@ -89,7 +92,7 @@ export class Fighter {
                     FighterState.CROUCH_RISE, FighterState.JUMP_LAND, FighterState.IDLE_TURN,
                     FighterState.FIVE_PUNCH, FighterState.SIX_PUNCH, FighterState.FOUR_PUNCH,
                     FighterState.FIVE_KICK, FighterState.SIX_KICK, FighterState.FOUR_KICK,
-                    FighterState.HURT_HEAD_LIGHT, FighterState.HURT_HEAD_MEDIUM, FighterState.HURT_HEAD_HEAVY, 
+                    FighterState.HURT_HEAD_LIGHT, FighterState.HURT_HEAD_MEDIUM, FighterState.HURT_HEAD_HEAVY,
                     FighterState.HURT_BODY_LIGHT, FighterState.HURT_BODY_MEDIUM, FighterState.HURT_BODY_HEAVY
                 ],
             },
@@ -197,7 +200,7 @@ export class Fighter {
                 update: this.handle6PState,
                 validFrom: [
                     FighterState.IDLE,
-                    FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD
+                    FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD,
                 ]
             },
             [FighterState.FOUR_PUNCH]: {
@@ -370,16 +373,13 @@ export class Fighter {
         this.changeState(FighterState.IDLE, time);
     }
 
-    handleLightAttReset(time) {
-        this.setAnimationFrame(0, time);
-        this.handleAttInit();
-        this.attackStruck = false;
-    }
+    // handleLightAttReset(time) {
+    //     this.setAnimationFrame(0, time);
+    //     this.handleAttInit();
+    //     this.attackStruck = false;
+    // }
 
     handle5PState = (time) => {
-        if (this.animationFrame < 2) return;
-        if (control.is5P(this.playerId)) this.handleLightAttReset(time);
-
         if (!this.isAnimeComplete()) return;
         this.changeState(FighterState.IDLE, time);
     }
@@ -392,9 +392,6 @@ export class Fighter {
         this.changeState(FighterState.IDLE, time);
     }
     handle5KState = (time) => {
-        if (this.animationFrame < 2) return;
-        if (control.is5K(this.playerId)) this.handleLightAttReset(time);
-
         if (!this.isAnimeComplete()) return;
         this.changeState(FighterState.IDLE, time);
     }
@@ -416,16 +413,20 @@ export class Fighter {
             this.changeState(FighterState.JUMP_START, time);
         else if (control.isDown(this.playerId))
             this.changeState(FighterState.CROUCH_DOWN, time);
-        else if (control.isBackward(this.playerId, this.direction))
-            this.changeState(FighterState.WALK_BACKWARD, time);
-        else if (control.isForward(this.playerId, this.direction))
-            this.changeState(FighterState.WALK_FORWARD, time);
-        else if (control.is5P(this.playerId))
+        else if (control.isBackward(this.playerId, this.direction)) {
+            if (control.isAccept(this.playerId)) this.changeState(FighterState.FOUR_PUNCH, time);
+            else this.changeState(FighterState.WALK_BACKWARD, time);
+        }
+        else if (control.isForward(this.playerId, this.direction)) {
+            if (control.isAccept(this.playerId)) this.changeState(FighterState.SIX_PUNCH, time);
+            else this.changeState(FighterState.WALK_FORWARD, time);
+        }
+        else if (control.isAccept(this.playerId))
             this.changeState(FighterState.FIVE_PUNCH, time);
-        else if (control.is6P(this.playerId))
-            this.changeState(FighterState.SIX_PUNCH, time);
-        else if (control.is4P(this.playerId))
-            this.changeState(FighterState.FOUR_PUNCH, time);
+        // else if (control.is6P(this.playerId))
+        //     this.changeState(FighterState.SIX_PUNCH, time);
+        // else if (control.is4P(this.playerId))
+        //     this.changeState(FighterState.FOUR_PUNCH, time);
         else if (control.is5K(this.playerId))
             this.changeState(FighterState.FIVE_KICK, time);
         else if (control.is6K(this.playerId))
@@ -439,6 +440,49 @@ export class Fighter {
             this.direction = newDirection;
             this.changeState(FighterState.IDLE_TURN, time);
         }
+    }
+
+    handleWalkForwardState = (time) => {
+        if (!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE, time);
+        else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START, time);
+        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN, time);
+
+        if (control.isAccept(this.playerId))
+            this.changeState(FighterState.SIX_PUNCH, time);
+
+        // else if (control.is6P(this.playerId))
+        //     this.changeState(FighterState.SIX_PUNCH, time);
+        // else if (control.is4P(this.playerId))
+        //     this.changeState(FighterState.FOUR_PUNCH, time);
+        else if (control.is5K(this.playerId))
+            this.changeState(FighterState.FIVE_KICK, time);
+        else if (control.is6K(this.playerId))
+            this.changeState(FighterState.SIX_KICK, time);
+        else if (control.is4K(this.playerId))
+            this.changeState(FighterState.FOUR_KICK, time);
+
+        this.direction = this.getDirection();
+    }
+    handleWalkBackwardState = (time) => {
+        if (!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE, time);
+        else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START, time);
+        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN, time);
+
+        if (control.isAccept(this.playerId))
+            this.changeState(FighterState.FOUR_PUNCH, time);
+
+        // else if (control.is6P(this.playerId))
+        //     this.changeState(FighterState.SIX_PUNCH, time);
+        // else if (control.is4P(this.playerId))
+        //     this.changeState(FighterState.FOUR_PUNCH, time);
+        else if (control.is5K(this.playerId))
+            this.changeState(FighterState.FIVE_KICK, time);
+        else if (control.is6K(this.playerId))
+            this.changeState(FighterState.SIX_KICK, time);
+        else if (control.is4K(this.playerId))
+            this.changeState(FighterState.FOUR_KICK, time);
+
+        this.direction = this.getDirection();
     }
 
     handleIdleTurnState = (time) => {
@@ -456,47 +500,6 @@ export class Fighter {
 
     handleWalkInit = () => {
         this.velocity.x = this.initialVelocity.x[this.currentState] ?? 0;
-    }
-
-    handleWalkForwardState = (time) => {
-        if (!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE, time);
-        else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START, time);
-        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN, time);
-
-        if (control.is5P(this.playerId))
-            this.changeState(FighterState.FIVE_PUNCH, time);
-        else if (control.is6P(this.playerId))
-            this.changeState(FighterState.SIX_PUNCH, time);
-        else if (control.is4P(this.playerId))
-            this.changeState(FighterState.FOUR_PUNCH, time);
-        else if (control.is5K(this.playerId))
-            this.changeState(FighterState.FIVE_KICK, time);
-        else if (control.is6K(this.playerId))
-            this.changeState(FighterState.SIX_KICK, time);
-        else if (control.is4K(this.playerId))
-            this.changeState(FighterState.FOUR_KICK, time);
-
-        this.direction = this.getDirection();
-    }
-    handleWalkBackwardState = (time) => {
-        if (!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE, time);
-        else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START, time);
-        else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN, time);
-
-        if (control.is5P(this.playerId))
-            this.changeState(FighterState.FIVE_PUNCH, time);
-        else if (control.is6P(this.playerId))
-            this.changeState(FighterState.SIX_PUNCH, time);
-        else if (control.is4P(this.playerId))
-            this.changeState(FighterState.FOUR_PUNCH, time);
-        else if (control.is5K(this.playerId))
-            this.changeState(FighterState.FIVE_KICK, time);
-        else if (control.is6K(this.playerId))
-            this.changeState(FighterState.SIX_KICK, time);
-        else if (control.is4K(this.playerId))
-            this.changeState(FighterState.FOUR_KICK, time);
-
-        this.direction = this.getDirection();
     }
 
     handleJumpStartInit = () => {
@@ -637,7 +640,7 @@ export class Fighter {
     handleAttHit(time, attStrength, hitLocation) {
         const newState = this.getHurtState(attStrength, hitLocation);
         const { velocity, friction } = FighterAttackBaseData[attStrength].slide;
-        
+
         this.slideVelocity = velocity;
         this.slideFriction = friction;
         this.changeState(newState, time);
@@ -648,7 +651,7 @@ export class Fighter {
     updateAnime(time) {
         const animation = this.animations[this.currentState];
         if (animation[this.animationFrame][1] <= FrameDelay.FREEZE || time.previous <= this.animationTimer) return;
-        
+
         this.setAnimationFrame(this.animationFrame + 1, time);
     }
 

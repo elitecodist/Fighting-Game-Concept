@@ -132,8 +132,10 @@ export const isBackward = (id, direction) => direction === FighterDirection.LEFT
 
 export const isIdle = (id) => !(isLeft(id) || isRight(id) || isUp(id) || isDown(id));
 
+export const isAccept = (id) => isControlPressed(id, Control.ACCEPT);
+
 export const is5P = (id) => isControlPressed(id, Control.ACCEPT);
-export const is6P = (id) => isControlPressed(id, Control.SCROLL_LEFT);
+export const is6P = (id) => isControlPressed(id, Control.ACCEPT) && isControlPressed(id, Control.RIGHT);
 export const is4P = (id) => isControlPressed(id, Control.SCROLL_RIGHT);
 
 export const is5K = (id) => isControlPressed(id, Control.SET);

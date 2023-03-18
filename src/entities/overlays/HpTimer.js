@@ -75,17 +75,16 @@ export class HpTimer {
     updateHpBars(time) {
         for (const index in this.hpBars) {
             if (this.hpBars[index].hitPoints <= gameState.fighters[index].hitPoints) continue;
-            // this.hpBars[index].hitPoints = Math.max(0, this.hpBars[index].hitPoints - (time.secondsPassed * FPS));
             this.hpBars[index].hitPoints = Math.max(0, gameState.fighters[index].hitPoints);
         }
     }
 
     updateKoIcon(time) {
         if (this.hpBars.every((hpBar) => hpBar.hitPoints > 0)) return;
-        if (time.previous < this.koAnimationTimer + KO_FLASH_DELAY[this.koFrame]) return;
+        if (time.previous < this.koAnimeTimer + KO_FLASH_DELAY[this.koFrame]) return;
 
         this.koFrame = 1 - this.koFrame;
-        this.koAnimationTimer = time.previous;
+        this.koAnimeTimer = time.previous;
     }
 
     update(time) {

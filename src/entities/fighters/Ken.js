@@ -175,9 +175,9 @@ export class Ken extends Fighter {
                 ['forwardK-7', FrameDelay.TRANSITION],
             ],
             [FighterState.FOUR_KICK]: [
-                ['roundhouse-1', 3], ['roundhouse-2', 4], ['roundhouse-3', 5],
-                ['roundhouse-4', 4], ['roundhouse-5', 4], ['roundhouse-6', 3],
-                ['roundhouse-7', 3], ['roundhouse-8', 3], ['roundhouse-9', 3],
+                ['roundhouse-1', 2], ['roundhouse-2', 3], ['roundhouse-3', 3],
+                ['roundhouse-4', 3], ['roundhouse-5', 5], ['roundhouse-6', 5],
+                ['roundhouse-7', 5], ['roundhouse-8', 4], ['roundhouse-9', 3],
                 ['roundhouse-10', FrameDelay.TRANSITION],
             ],
         };

@@ -8,6 +8,12 @@ export class Ken extends Fighter {
         this.deck = [
             'redC', 'redC', 'greenC', 'blueC', 'redC',
             'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'redC',
         ];
 
         this.image = document.querySelector('img[alt="ken"]');

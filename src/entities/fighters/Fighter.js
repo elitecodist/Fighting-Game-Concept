@@ -40,6 +40,7 @@ export class Fighter {
 
     };
 
+
     constructor(playerId, onAttHit) {
         this.frames = new Map();
         this.image = new Image();
@@ -66,6 +67,8 @@ export class Fighter {
         this.slideFriction = 0;
 
         this.currentState = FighterState.IDLE;
+        this.hand = [];
+        this.handPos = 2;
         this.activeCard = undefined;
 
         this.opponent = undefined;
@@ -290,6 +293,11 @@ export class Fighter {
         this.slideVelocity = 0;
     }
 
+    expendCard() {
+        this.hand.splice(this.handPos,1);
+        if (this.handPos >= this.hand.length) this.handPos = 0; //temporary: draw/shuffle shoudld never be expended
+    }
+
     getDirection = () => {
         if (this.position.x + this.boxes.push.x + this.boxes.push.width <= this.opponent.position.x + this.opponent.boxes.push.x) {
             return FighterDirection.RIGHT;
@@ -414,25 +422,54 @@ export class Fighter {
         else if (control.isDown(this.playerId))
             this.changeState(FighterState.CROUCH_DOWN, time);
         else if (control.isBackward(this.playerId, this.direction)) {
-            if (control.isAccept(this.playerId)) this.changeState(FighterState.FOUR_PUNCH, time);
+            if (control.isAccept(this.playerId)) {
+                switch (this.activeCard) {
+                    case 'redC':
+                        this.changeState(FighterState.FOUR_PUNCH, time);
+                        break;
+                    case 'greenC':
+                        this.changeState(FighterState.FOUR_KICK, time);
+                        break;
+                }
+                this.expendCard();
+            }
             else this.changeState(FighterState.WALK_BACKWARD, time);
         }
         else if (control.isForward(this.playerId, this.direction)) {
-            if (control.isAccept(this.playerId)) this.changeState(FighterState.SIX_PUNCH, time);
+            if (control.isAccept(this.playerId)) {
+                switch (this.activeCard) {
+                    case 'redC':
+                        this.changeState(FighterState.SIX_PUNCH, time);
+                        break;
+                    case 'greenC':
+                        this.changeState(FighterState.SIX_KICK, time);
+                        break;
+                }
+                this.expendCard();
+            }
             else this.changeState(FighterState.WALK_FORWARD, time);
         }
-        else if (control.isAccept(this.playerId))
-            this.changeState(FighterState.FIVE_PUNCH, time);
+        else if (control.isAccept(this.playerId)) {
+            switch (this.activeCard) {
+                case 'redC':
+                    this.changeState(FighterState.FIVE_PUNCH, time);
+                    break;
+                case 'greenC':
+                    this.changeState(FighterState.FIVE_KICK, time);
+                    break;
+            }
+            this.expendCard();
+        }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);
         // else if (control.is4P(this.playerId))
         //     this.changeState(FighterState.FOUR_PUNCH, time);
-        else if (control.is5K(this.playerId))
-            this.changeState(FighterState.FIVE_KICK, time);
-        else if (control.is6K(this.playerId))
-            this.changeState(FighterState.SIX_KICK, time);
-        else if (control.is4K(this.playerId))
-            this.changeState(FighterState.FOUR_KICK, time);
+        // else if (control.is5K(this.playerId))
+        //     this.changeState(FighterState.FIVE_KICK, time);
+        // else if (control.is6K(this.playerId))
+        //     this.changeState(FighterState.SIX_KICK, time);
+        // else if (control.is4K(this.playerId))
+        //     this.changeState(FighterState.FOUR_KICK, time);
 
         const newDirection = this.getDirection();
 
@@ -447,19 +484,27 @@ export class Fighter {
         else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START, time);
         else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN, time);
 
-        if (control.isAccept(this.playerId))
-            this.changeState(FighterState.SIX_PUNCH, time);
-
+        if (control.isAccept(this.playerId)) {
+            switch (this.activeCard) {
+                case 'redC':
+                    this.changeState(FighterState.SIX_PUNCH, time);
+                    break;
+                case 'greenC':
+                    this.changeState(FighterState.SIX_KICK, time);
+                    break;
+            }
+            this.expendCard();
+        }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);
         // else if (control.is4P(this.playerId))
         //     this.changeState(FighterState.FOUR_PUNCH, time);
-        else if (control.is5K(this.playerId))
-            this.changeState(FighterState.FIVE_KICK, time);
-        else if (control.is6K(this.playerId))
-            this.changeState(FighterState.SIX_KICK, time);
-        else if (control.is4K(this.playerId))
-            this.changeState(FighterState.FOUR_KICK, time);
+        // else if (control.is5K(this.playerId))
+        //     this.changeState(FighterState.FIVE_KICK, time);
+        // else if (control.is6K(this.playerId))
+        //     this.changeState(FighterState.SIX_KICK, time);
+        // else if (control.is4K(this.playerId))
+        //     this.changeState(FighterState.FOUR_KICK, time);
 
         this.direction = this.getDirection();
     }
@@ -468,19 +513,27 @@ export class Fighter {
         else if (control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START, time);
         else if (control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN, time);
 
-        if (control.isAccept(this.playerId))
-            this.changeState(FighterState.FOUR_PUNCH, time);
-
+        if (control.isAccept(this.playerId)) {
+            switch (this.activeCard) {
+                case 'redC':
+                    this.changeState(FighterState.FOUR_PUNCH, time);
+                    break;
+                case 'greenC':
+                    this.changeState(FighterState.FOUR_KICK, time);
+                    break;
+            }
+            this.expendCard();
+        }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);
         // else if (control.is4P(this.playerId))
         //     this.changeState(FighterState.FOUR_PUNCH, time);
-        else if (control.is5K(this.playerId))
-            this.changeState(FighterState.FIVE_KICK, time);
-        else if (control.is6K(this.playerId))
-            this.changeState(FighterState.SIX_KICK, time);
-        else if (control.is4K(this.playerId))
-            this.changeState(FighterState.FOUR_KICK, time);
+        // else if (control.is5K(this.playerId))
+        //     this.changeState(FighterState.FIVE_KICK, time);
+        // else if (control.is6K(this.playerId))
+        //     this.changeState(FighterState.SIX_KICK, time);
+        // else if (control.is4K(this.playerId))
+        //     this.changeState(FighterState.FOUR_KICK, time);
 
         this.direction = this.getDirection();
     }

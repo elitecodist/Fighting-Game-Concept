@@ -134,13 +134,13 @@ export const isIdle = (id) => !(isLeft(id) || isRight(id) || isUp(id) || isDown(
 
 export const isAccept = (id) => isControlPressed(id, Control.ACCEPT);
 
-export const is5P = (id) => isControlPressed(id, Control.ACCEPT);
-export const is6P = (id) => isControlPressed(id, Control.ACCEPT) && isControlPressed(id, Control.RIGHT);
-export const is4P = (id) => isControlPressed(id, Control.SCROLL_RIGHT);
+// export const is5P = (id) => isControlPressed(id, Control.ACCEPT);
+// export const is6P = (id) => isControlPressed(id, Control.ACCEPT) && isControlPressed(id, Control.RIGHT);
+// export const is4P = (id) => isControlPressed(id, Control.SCROLL_RIGHT);
 
-export const is5K = (id) => isControlPressed(id, Control.SET);
-export const is6K = (id) => isControlPressed(id, Control.CANCEL);
-export const is4K = (id) => isControlPressed(id, Control.START);
+// export const is5K = (id) => isControlPressed(id, Control.SET);
+// export const is6K = (id) => isControlPressed(id, Control.CANCEL);
+// export const is4K = (id) => isControlPressed(id, Control.START);
 
 export const isScrollR = (id) => isControlPressed(id, Control.SCROLL_RIGHT);
 export const isScrollL = (id) => isControlPressed(id, Control.SCROLL_LEFT);

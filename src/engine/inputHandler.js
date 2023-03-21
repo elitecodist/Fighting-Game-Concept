@@ -100,7 +100,7 @@ export const isControlDown = (id, control) => isKeyDown(controls[id].keyboard[co
     || isButtonDown(id, controls[id].gamePad[control]);
 
 export const isControlPressed = (id, control) => isKeyPressed(controls[id].keyboard[control])
-|| isButtonPressed(id, controls[id].gamePad[control]);
+    || isButtonPressed(id, controls[id].gamePad[control]);
 
 export const isLeft = (id) => isKeyDown(controls[id].keyboard[Control.LEFT])
     || isButtonDown(id, controls[id].gamePad[Control.LEFT])
@@ -144,3 +144,8 @@ export const isAccept = (id) => isControlPressed(id, Control.ACCEPT);
 
 export const isScrollR = (id) => isControlPressed(id, Control.SCROLL_RIGHT);
 export const isScrollL = (id) => isControlPressed(id, Control.SCROLL_LEFT);
+
+export const isSleight = (id) =>
+    (isControlDown(id, Control.SCROLL_LEFT) && isControlPressed(id, Control.SCROLL_RIGHT))
+    || (isControlDown(id, Control.SCROLL_RIGHT) && isControlPressed(id, Control.SCROLL_LEFT));
+

@@ -26,7 +26,7 @@ export class HpTimer {
 
     frames = new Map([
         ['hpPurp', [329, 195, 18, 13]],
-        ['hpBlue', [329, 268, 18, 12]],
+        ['hpBlue', [329, 268, 18, 13]],
         ['hpGreen', [329, 340, 18, 13]],
         ['hpGray', [329, 413, 18, 13]],
 

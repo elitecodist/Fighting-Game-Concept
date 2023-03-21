@@ -53,7 +53,9 @@ export class Fighter {
         this.initialVelocity = {};
         this.direction = playerId === 0 ? FighterDirection.RIGHT : FighterDirection.LEFT;
         this.gravity = 0;
+
         this.attackStruck = false;
+        //this.cardPlayed = false;
 
         this.playerId = playerId;
         this.position = {
@@ -70,6 +72,7 @@ export class Fighter {
         this.hand = [];
         this.handPos = 2;
         this.activeCard = undefined;
+        this.sleight = [];
 
         this.opponent = undefined;
         this.onAttHit = onAttHit;
@@ -295,7 +298,17 @@ export class Fighter {
 
     expendCard() {
         this.hand.splice(this.handPos,1);
-        if (this.handPos >= this.hand.length) this.handPos = 0; //temporary: draw/shuffle shoudld never be expended
+        if (this.handPos >= this.hand.length) this.handPos = 0;
+    }
+
+    handleSleight() {
+        switch (this.sleight.length){
+            case 3:
+                console.log('sleight full');
+                break;
+            default:
+                this.sleight.push(this.activeCard);
+        }
     }
 
     getDirection = () => {
@@ -460,16 +473,10 @@ export class Fighter {
             }
             this.expendCard();
         }
-        // else if (control.is6P(this.playerId))
-        //     this.changeState(FighterState.SIX_PUNCH, time);
-        // else if (control.is4P(this.playerId))
-        //     this.changeState(FighterState.FOUR_PUNCH, time);
-        // else if (control.is5K(this.playerId))
-        //     this.changeState(FighterState.FIVE_KICK, time);
-        // else if (control.is6K(this.playerId))
-        //     this.changeState(FighterState.SIX_KICK, time);
-        // else if (control.is4K(this.playerId))
-        //     this.changeState(FighterState.FOUR_KICK, time);
+        else if (control.isSleight(this.playerId)) {
+            this.handleSleight();
+            this.expendCard();
+        }
 
         const newDirection = this.getDirection();
 

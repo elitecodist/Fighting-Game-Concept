@@ -75,160 +75,42 @@ export class Cards {
         let thirdCard = '';
         let fourthCard = '';
 
-        try{
-            firstCard = this.p1Hand[this.p1Pos - 2];
-        } catch (error) {}
-        try{
-            secondCard = this.p1Hand[this.p1Pos - 1];
-        } catch (error) {}
-        try{
-            thirdCard = this.p1Hand[this.p1Pos + 1];
-        }catch (error) {}
-        try{
-            fourthCard = this.p1Hand[this.p1Pos + 2];
-        }catch (error) {}
+        switch (this.p1Pos - 2) {
+            case -1:
+                break;
+            case -2:
+                break;
+            default:
+                firstCard = this.p1Hand[this.p1Pos - 2];
+        }
+        switch (this.p1Pos - 1) {
+            case -1:
+                break;
+            default:
+                secondCard = this.p1Hand[this.p1Pos - 1];
+        }
+        switch (this.p1Pos + 2) {
+            case -1:
+                break;
+            case -2:
+                break;
+            default:
+                fourthCard = this.p1Hand[this.p1Pos + 2];
+        }
+        switch (this.p1Pos + 1) {
+            case -1:
+                break;
+            case -2:
+                break;
+            default:
+                thirdCard = this.p1Hand[this.p1Pos + 1];
+        }
+
 
         this.drawFrame(context, this.cardspng, firstCard, -8, 164);//1
         this.drawFrame(context, this.cardspng, secondCard, 5, 171);//2
         this.drawFrame(context, this.cardspng, fourthCard, 37, 199);//4
         this.drawFrame(context, this.cardspng, thirdCard, 27, 187);//3
-        this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos], 17, 179);//active
-
-        // switch (this.p1Hand.length) {
-        //     case 4:
-        //         switch (this.p1Pos) {
-        //             case 0:
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 5, 171);//2
-        //                 //4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-        //                 break;
-        //             case 1:
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 5, 171);//2
-        //                 //4
-        //                 //3
-        //                 break;
-        //             case 2:
-        //                 //1
-        //                 //2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 27, 187);//3
-        //                 break;
-        //             case 3:
-        //                 //1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], 5, 171);//2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[1], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 27, 187);//3
-        //                 break;
-        //         }
-        //         break;
-        //     case 3:
-        //         switch (this.p1Pos) {
-        //             case 0:
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 5, 171);//2
-        //                 //4
-        //                 //3
-        //                 break;
-        //             case 1:
-        //                 //1
-        //                 //2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 27, 187);//3
-        //                 break;
-        //             case 2:
-        //                 //1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], 5, 171);//2
-        //                 //4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 27, 187);//3
-        //                 break;
-        //         }
-        //         break;
-        //     case 2:
-        //         switch (this.p1Pos) {
-        //             case 0:
-        //                 //1
-        //                 //2
-        //                 //4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 27, 187);//3
-        //                 break;
-        //             case 1:
-        //                 //1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], 5, 171);//2
-        //                 break;
-        //         }
-        //         break;
-        //     default:
-        //         switch (this.p1Pos) {
-        //             case 0:
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 5, 171);//2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 2], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-        //                 break;
-        //             case 1:
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 5, 171);//2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 2], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-        //                 break;
-        //             case (this.p1Hand.length - 2)://shuffleC
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 2], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 1], 5, 171);//2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-        //                 break;
-        //             case (this.p1Hand.length - 1)://drawC
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 2], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 1], 5, 171);//2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[1], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[0], 27, 187);//3
-        //                 break;
-        //             default:
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 2], -8, 164);//1
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 1], 5, 171);//2
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 2], 37, 199);//4
-        //                 this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-        //                 break;
-        //         }
-        // }
-        if (this.p1Hand.length < 5) {
-
-        } else {
-            switch (this.p1Pos) {
-                case 0://shuffleC
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 2], -8, 164);//1
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], 5, 171);//2
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 2], 37, 199);//4
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-                    break;
-                case 1://drawC
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Hand.length - 1], -8, 164);//1
-                    this.drawFrame(context, this.cardspng, this.p1Hand[0], 5, 171);//2
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 2], 37, 199);//4
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-                    break;
-                case (this.p1Hand.length - 2):
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 2], -8, 164);//1
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 1], 5, 171);//2
-                    this.drawFrame(context, this.cardspng, this.p1Hand[0], 37, 199);//4
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-                    break;
-                case (this.p1Hand.length - 1):
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 2], -8, 164);//1
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 1], 5, 171);//2
-                    this.drawFrame(context, this.cardspng, this.p1Hand[1], 37, 199);//4
-                    this.drawFrame(context, this.cardspng, this.p1Hand[0], 27, 187);//3
-                    break;
-                default:
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 2], -8, 164);//1
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos - 1], 5, 171);//2
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 2], 37, 199);//4
-                    this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos + 1], 27, 187);//3
-                    break;
-            }
-        }
         this.drawFrame(context, this.cardspng, this.p1Hand[this.p1Pos], 17, 179);//active
     }
 

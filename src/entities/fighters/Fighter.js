@@ -523,6 +523,10 @@ export class Fighter {
                     this.changeState(FighterState.SIX_KICK, time);
                     this.expendCard('play');
                     break;
+                case 'blueC':
+                    this.changeState(FighterState.BLUE_1, time);
+                    this.expendCard('play');
+                    break;
                 case 'drawC':
                     this.drawCard();
                     break;
@@ -560,6 +564,10 @@ export class Fighter {
                     break;
                 case 'greenC':
                     this.changeState(FighterState.FOUR_KICK, time);
+                    this.expendCard('play');
+                    break;
+                case 'blueC':
+                    this.changeState(FighterState.BLUE_1, time);
                     this.expendCard('play');
                     break;
                 case 'drawC':

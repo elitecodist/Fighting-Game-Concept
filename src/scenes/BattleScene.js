@@ -41,7 +41,7 @@ export class BattleScene {
 
     getFighterEntity = (fighterState, index) => {
         const FighterEntityClass = this.getFighterEntityClass(fighterState.id);
-        return new FighterEntityClass(index, this.handleAttHit);
+        return new FighterEntityClass(index, this.handleAttHit.bind(this), this.addEntity.bind(this));
     }
 
     getFighterEntities() {
@@ -90,7 +90,7 @@ export class BattleScene {
         this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - 192, 0, this.fighters);
     }
 
-    handleAttHit = (time, playerId, opponentId, position, strength) => {
+    handleAttHit(time, playerId, opponentId, position, strength){
         gameState.fighters[opponentId].hitPoints -= FighterAttackBaseData[strength].damage;
 
         this.hurtTimer = time.previous + (FIGHTER_HURT_DELAY * FRAME_TIME);

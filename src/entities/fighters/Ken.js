@@ -6,14 +6,14 @@ export class Ken extends Fighter {
         super(playerId, onAttackHit);
 
         this.deck = [
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
-            'redC', 'redC', 'greenC', 'blueC', 'redC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
+            'redC', 'redC', 'greenC', 'blueC', 'greenC',
         ];
 
         this.image = document.querySelector('img[alt="ken"]');
@@ -118,6 +118,12 @@ export class Ken extends Fighter {
             ['roundhouse-8', [[[695, 757, 72, 94], [-12, 94]], PushBox.STAND]],
             ['roundhouse-9', [[[775, 756, 76, 95], [38, 95]], PushBox.STAND]],
             ['roundhouse-10', [[[859, 757, 66, 94], [33, 94]], PushBox.STAND]],
+
+            ['fireball-1', [[[24, 2269, 74, 90], [37, 90]], PushBox.STAND]],
+            ['fireball-2', [[[106, 2274, 90, 85], [45, 85]], PushBox.STAND]],
+            ['fireball-3', [[[204, 2279, 96, 80], [48, 80]], PushBox.STAND]],
+            ['fireball-4', [[[304, 2282, 114, 77], [57, 77]], PushBox.STAND]],//punchBox
+            ['fireball-5', [[[426, 2282, 114, 77], [57, 77]], PushBox.STAND]],//punchBox
         ]);
 
         this.animations = {
@@ -191,6 +197,10 @@ export class Ken extends Fighter {
                 ['roundhouse-7', 5], ['roundhouse-8', 4], ['roundhouse-9', 3],
                 ['roundhouse-10', FrameDelay.TRANSITION],
             ],
+            [FighterState.BLUE_1]: [
+                ['special-1', 2], ['special-2', 8], ['special-3', 2],
+                ['special-4', 40], ['special-5', FrameDelay.TRANSITION],
+            ],
         };
 
         this.initialVelocity = {
@@ -204,5 +214,25 @@ export class Ken extends Fighter {
         };
 
         this.gravity = 50;
+
+        this.states[FighterState.SPECIAL_1] = {
+            init: this.handleFireballInit,
+            update: this.handleFireballState,
+            validFrom: [
+                FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD,
+                FighterState.IDLE_TURN, FighterState.CROUCH, FighterState.CROUCH_DOWN,
+                FighterState.CROUCH_RISE, FighterState.CROUCH_TURN
+            ]
+        }
+        this.states[FighterState.IDLE].validFrom = [...this.states[FighterState.IDLE].validFrom, FighterState.BLUE_1];
+    }
+
+    handleFireballInit = () => {
+        this.resetVelocities();
+    }
+
+    handleFireballState = (time) => {
+        if (!this.hasAnimationCompleted()) return;
+        this.changeState(FighterState.IDLE, time);
     }
 }

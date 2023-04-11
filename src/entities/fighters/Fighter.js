@@ -1,4 +1,5 @@
 import { Control } from "../../constants/control.js";
+import { shuffle } from "../../util/helpers.js";
 import {
     FighterDirection, FighterState,
     FIGHTER_START_DISTANCE, FrameDelay,
@@ -55,7 +56,6 @@ export class Fighter {
         this.gravity = 0;
 
         this.attackStruck = false;
-        //this.cardPlayed = false;
 
         this.playerId = playerId;
         this.position = {
@@ -73,6 +73,7 @@ export class Fighter {
         this.handPos = 2;
         this.activeCard = undefined;
         this.sleight = [];
+        this.discard = [];
 
         this.opponent = undefined;
         this.onAttHit = onAttHit;
@@ -296,18 +297,51 @@ export class Fighter {
         this.slideVelocity = 0;
     }
 
-    expendCard() {
-        this.hand.splice(this.handPos,1);
-        if (this.handPos >= this.hand.length) this.handPos = 0;
+    expendCard(type) {
+        switch (type) {
+            case 'play':
+                this.discard.push(this.activeCard);
+                this.hand.splice(this.handPos, 1);
+                if (this.handPos >= this.hand.length) this.handPos = 0;
+                break;
+            case 'sleight':
+                if (this.activeCard === 'drawC' || this.activeCard === 'shuffleC') return;
+                else {
+                    this.handleSleight();
+                }
+                break;
+        }
+    }
+
+    drawCard() {
+        this.hand.splice(0, 2);
+        this.discard = this.discard.concat(this.hand)
+        this.hand = this.deck.slice(0, 10);
+        this.deck.splice(0, 10);
+        this.hand.unshift('shuffleC', 'drawC');
+        this.handPos = 2;
+    }
+
+    shuffleCard() {
+        this.hand.splice(0, 2);
+        this.deck = this.deck.concat(this.discard, this.hand);
+        this.discard = [];
+        this.deck = shuffle(this.deck);
+        this.hand = this.deck.slice(0, 10);
+        this.deck.splice(0, 10);
+        this.hand.unshift('shuffleC', 'drawC');
+        this.handPos = 2;
     }
 
     handleSleight() {
-        switch (this.sleight.length){
+        switch (this.sleight.length) {
             case 3:
                 console.log('sleight full');
                 break;
             default:
                 this.sleight.push(this.activeCard);
+                this.hand.splice(this.handPos, 1);
+                if (this.handPos >= this.hand.length) this.handPos = 0;
         }
     }
 
@@ -435,47 +469,35 @@ export class Fighter {
         else if (control.isDown(this.playerId))
             this.changeState(FighterState.CROUCH_DOWN, time);
         else if (control.isBackward(this.playerId, this.direction)) {
-            if (control.isAccept(this.playerId)) {
-                switch (this.activeCard) {
-                    case 'redC':
-                        this.changeState(FighterState.FOUR_PUNCH, time);
-                        break;
-                    case 'greenC':
-                        this.changeState(FighterState.FOUR_KICK, time);
-                        break;
-                }
-                this.expendCard();
-            }
-            else this.changeState(FighterState.WALK_BACKWARD, time);
+            this.changeState(FighterState.WALK_BACKWARD, time);
         }
         else if (control.isForward(this.playerId, this.direction)) {
-            if (control.isAccept(this.playerId)) {
-                switch (this.activeCard) {
-                    case 'redC':
-                        this.changeState(FighterState.SIX_PUNCH, time);
-                        break;
-                    case 'greenC':
-                        this.changeState(FighterState.SIX_KICK, time);
-                        break;
-                }
-                this.expendCard();
-            }
-            else this.changeState(FighterState.WALK_FORWARD, time);
+            this.changeState(FighterState.WALK_FORWARD, time);
         }
         else if (control.isAccept(this.playerId)) {
             switch (this.activeCard) {
                 case 'redC':
                     this.changeState(FighterState.FIVE_PUNCH, time);
+                    this.expendCard('play');
                     break;
                 case 'greenC':
                     this.changeState(FighterState.FIVE_KICK, time);
+                    this.expendCard('play');
+                    break;
+                case 'blueC':
+                    this.changeState(FighterState.BLUE_1, time);
+                    this.expendCard('play');
+                    break;
+                case 'drawC':
+                    this.drawCard();
+                    break;
+                case 'shuffleC':
+                    this.shuffleCard();
                     break;
             }
-            this.expendCard();
         }
         else if (control.isSleight(this.playerId)) {
-            this.handleSleight();
-            this.expendCard();
+            this.expendCard('sleight');
         }
 
         const newDirection = this.getDirection();
@@ -495,12 +517,22 @@ export class Fighter {
             switch (this.activeCard) {
                 case 'redC':
                     this.changeState(FighterState.SIX_PUNCH, time);
+                    this.expendCard('play');
                     break;
                 case 'greenC':
                     this.changeState(FighterState.SIX_KICK, time);
+                    this.expendCard('play');
+                    break;
+                case 'drawC':
+                    this.drawCard();
+                    break;
+                case 'shuffleC':
+                    this.shuffleCard();
                     break;
             }
-            this.expendCard();
+        }
+        else if (control.isSleight(this.playerId)) {
+            this.expendCard('sleight');
         }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);
@@ -524,12 +556,22 @@ export class Fighter {
             switch (this.activeCard) {
                 case 'redC':
                     this.changeState(FighterState.FOUR_PUNCH, time);
+                    this.expendCard('play');
                     break;
                 case 'greenC':
                     this.changeState(FighterState.FOUR_KICK, time);
+                    this.expendCard('play');
+                    break;
+                case 'drawC':
+                    this.drawCard();
+                    break;
+                case 'shuffleC':
+                    this.shuffleCard();
                     break;
             }
-            this.expendCard();
+        }
+        else if (control.isSleight(this.playerId)) {
+            this.expendCard('sleight');
         }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);

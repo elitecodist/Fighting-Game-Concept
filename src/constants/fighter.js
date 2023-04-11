@@ -84,6 +84,7 @@ export const FighterState = {
     HURT_BODY_LIGHT: 'hurt-body-light',
     HURT_BODY_MEDIUM: 'hurt-body-medium',
     HURT_BODY_HEAVY: 'hurt-body-heavy',
+    BLUE_1: 'blue-1'
 };
 
 export const InputState = {
@@ -123,5 +124,6 @@ export const hurtStateValidFrom = [
     FighterState.FIVE_PUNCH, FighterState.SIX_PUNCH, FighterState.FOUR_PUNCH,
     FighterState.FIVE_KICK, FighterState.SIX_KICK, FighterState.FOUR_KICK,
     FighterState.HURT_HEAD_LIGHT, FighterState.HURT_HEAD_MEDIUM, FighterState.HURT_HEAD_HEAVY, 
-    FighterState.HURT_BODY_LIGHT, FighterState.HURT_BODY_MEDIUM, FighterState.HURT_BODY_HEAVY
+    FighterState.HURT_BODY_LIGHT, FighterState.HURT_BODY_MEDIUM, FighterState.HURT_BODY_HEAVY,
+    FighterState.BLUE_1,
 ]

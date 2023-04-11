@@ -9,6 +9,7 @@ import { gameState } from "../state/gameState.js";
 import { FighterAttackStrength, FighterId, FighterAttackBaseData, FIGHTER_HURT_DELAY } from "../constants/fighter.js";
 import { LightHitSplash, MedHitSplash, HeavyHitSplash } from "../entities/effects/index.js";
 import { FRAME_TIME } from "../constants/game.js";
+import { CardInfo } from "../entities/CardInfo.js";
 
 export class BattleScene {
     fighters = [];
@@ -81,9 +82,10 @@ export class BattleScene {
         this.overlays = [
             new HpTimer(this.fighters),
             new Cards(this.fighters),
+            new CardInfo(this.fighters),
             new FpsCounter(),
         ];
-        
+
         // this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - (this.context.canvas.width/2), 0, this.fighters);
         this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - 192, 0, this.fighters);
     }
@@ -115,7 +117,9 @@ export class BattleScene {
     updateOverlays(time, context) {
         for (const overlay of this.overlays) {
             if (overlay.constructor.name === "Cards")
-                overlay.update(time, this.fighters);
+                overlay.update(time, context, this.fighters);
+            else if (overlay.constructor.name === "CardInfo")
+                overlay.update(time, this.fighters, context);
             else
                 overlay.update(time, context, this.camera);
         }

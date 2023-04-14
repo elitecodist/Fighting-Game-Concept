@@ -42,7 +42,7 @@ export class Fighter {
     };
 
 
-    constructor(playerId, onAttHit) {
+    constructor(playerId, onAtkHit) {
         this.frames = new Map();
         this.image = new Image();
 
@@ -55,7 +55,7 @@ export class Fighter {
         this.direction = playerId === 0 ? FighterDirection.RIGHT : FighterDirection.LEFT;
         this.gravity = 0;
 
-        this.attackStruck = false;
+        this.atkStruck = false;
 
         this.playerId = playerId;
         this.position = {
@@ -75,8 +75,11 @@ export class Fighter {
         this.sleight = [];
         this.discard = [];
 
+        this.isInSleightCombo = false;
+        this.sleightIndex = 0;
+
         this.opponent = undefined;
-        this.onAttHit = onAttHit;
+        this.onAtkHit = onAtkHit;
 
         this.boxes = {
             push: { x: 0, y: 0, width: 0, height: 0 },
@@ -191,9 +194,9 @@ export class Fighter {
                 ],
             },
             [FighterState.FIVE_PUNCH]: {
-                attackType: FighterAttackType.RED,
-                attackStrength: FighterAttackStrength.LIGHT,
-                init: this.handleAttInit,
+                atkType: FighterAttackType.RED,
+                atkStrength: FighterAttackStrength.LIGHT,
+                init: this.handleAtkInit,
                 update: this.handle5PState,
                 validFrom: [
                     FighterState.IDLE,
@@ -201,9 +204,9 @@ export class Fighter {
                 ]
             },
             [FighterState.SIX_PUNCH]: {
-                attackType: FighterAttackType.RED,
-                attackStrength: FighterAttackStrength.MEDIUM,
-                init: this.handleAttInit,
+                atkType: FighterAttackType.RED,
+                atkStrength: FighterAttackStrength.MEDIUM,
+                init: this.handleAtkInit,
                 update: this.handle6PState,
                 validFrom: [
                     FighterState.IDLE,
@@ -211,9 +214,9 @@ export class Fighter {
                 ]
             },
             [FighterState.FOUR_PUNCH]: {
-                attackType: FighterAttackType.RED,
-                attackStrength: FighterAttackStrength.HEAVY,
-                init: this.handleAttInit,
+                atkType: FighterAttackType.RED,
+                atkStrength: FighterAttackStrength.HEAVY,
+                init: this.handleAtkInit,
                 update: this.handle4PState,
                 validFrom: [
                     FighterState.IDLE,
@@ -221,9 +224,9 @@ export class Fighter {
                 ]
             },
             [FighterState.FIVE_KICK]: {
-                attackType: FighterAttackType.GREEN,
-                attackStrength: FighterAttackStrength.LIGHT,
-                init: this.handleAttInit,
+                atkType: FighterAttackType.GREEN,
+                atkStrength: FighterAttackStrength.LIGHT,
+                init: this.handleAtkInit,
                 update: this.handle5KState,
                 validFrom: [
                     FighterState.IDLE,
@@ -231,9 +234,9 @@ export class Fighter {
                 ]
             },
             [FighterState.SIX_KICK]: {
-                attackType: FighterAttackType.GREEN,
-                attackStrength: FighterAttackStrength.MEDIUM,
-                init: this.handleAttInit,
+                atkType: FighterAttackType.GREEN,
+                atkStrength: FighterAttackStrength.MEDIUM,
+                init: this.handleAtkInit,
                 update: this.handle6KState,
                 validFrom: [
                     FighterState.IDLE,
@@ -241,9 +244,9 @@ export class Fighter {
                 ]
             },
             [FighterState.FOUR_KICK]: {
-                attackType: FighterAttackType.GREEN,
-                attackStrength: FighterAttackStrength.HEAVY,
-                init: this.handleAttInit,
+                atkType: FighterAttackType.GREEN,
+                atkStrength: FighterAttackStrength.HEAVY,
+                init: this.handleAtkInit,
                 update: this.handle4KState,
                 validFrom: [
                     FighterState.IDLE,
@@ -297,7 +300,7 @@ export class Fighter {
         this.slideVelocity = 0;
     }
 
-    expendCard(type) {
+    expendCard(type, time) {
         switch (type) {
             case 'play':
                 this.discard.push(this.activeCard);
@@ -305,10 +308,7 @@ export class Fighter {
                 if (this.handPos >= this.hand.length) this.handPos = 0;
                 break;
             case 'sleight':
-                if (this.activeCard === 'drawC' || this.activeCard === 'shuffleC') return;
-                else {
-                    this.handleSleight();
-                }
+                this.handleSleight(time);
                 break;
         }
     }
@@ -333,12 +333,32 @@ export class Fighter {
         this.handPos = 2;
     }
 
-    handleSleight() {
+    playSleight(index, time) {
+        if (this.sleightIndex < 3) {
+            switch (this.sleight[this.sleightIndex]) {
+                case 'redC':
+                    this.changeState(FighterState.FIVE_PUNCH, time);
+                    break;
+                case 'greenC':
+                    this.changeState(FighterState.FIVE_KICK, time);
+                    break;
+                case 'blueC':
+                    this.changeState(FighterState.BLUE_1, time);
+            }
+            this.sleightIndex += 1;
+        } else {
+        }
+    }
+
+    handleSleight(time) {
         switch (this.sleight.length) {
             case 3:
-                console.log('sleight full');
+                this.isInSleightCombo = true;
+                this.playSleight(this.sleightIndex, time)
                 break;
             default:
+                if (this.activeCard === 'drawC' || this.activeCard === 'shuffleC') return;
+
                 this.sleight.push(this.activeCard);
                 this.hand.splice(this.handPos, 1);
                 if (this.handPos >= this.hand.length) this.handPos = 0;
@@ -372,16 +392,16 @@ export class Fighter {
         }
     }
 
-    getHurtState(attStrength, hitLocation) {
-        switch (attStrength) {
+    getHurtState(atkStrength, hurtLocation) {
+        switch (atkStrength) {
             case FighterAttackStrength.LIGHT:
-                if (hitLocation === FighterHurtBox.HEAD) return FighterState.HURT_HEAD_LIGHT;
+                if (hurtLocation === FighterHurtBox.HEAD) return FighterState.HURT_HEAD_LIGHT;
                 return FighterState.HURT_BODY_LIGHT;
             case FighterAttackStrength.MEDIUM:
-                if (hitLocation === FighterHurtBox.HEAD) return FighterState.HURT_HEAD_MEDIUM;
+                if (hurtLocation === FighterHurtBox.HEAD) return FighterState.HURT_HEAD_MEDIUM;
                 return FighterState.HURT_BODY_MEDIUM;
             case FighterAttackStrength.HEAVY:
-                if (hitLocation === FighterHurtBox.HEAD) return FighterState.HURT_HEAD_HEAVY;
+                if (hurtLocation === FighterHurtBox.HEAD) return FighterState.HURT_HEAD_HEAVY;
                 return FighterState.HURT_BODY_HEAVY;
         }
     }
@@ -411,9 +431,9 @@ export class Fighter {
 
     }
 
-    handleAttInit = () => {
+    handleAtkInit = () => {
         this.resetVelocities();
-        playSound(this.soundAttacks[this.states[this.currentState].attackStrength], VOLUME);
+        playSound(this.soundAttacks[this.states[this.currentState].atkStrength], VOLUME);
     }
 
     handleHurtInit = (time) => {
@@ -430,38 +450,86 @@ export class Fighter {
 
     // handleLightAttReset(time) {
     //     this.setAnimationFrame(0, time);
-    //     this.handleAttInit();
-    //     this.attackStruck = false;
+    //     this.handleAtkInit();
+    //     this.atkStruck = false;
     // }
 
     handle5PState = (time) => {
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightIndex, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
     handle6PState = (time) => {
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightIndex, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
     handle4PState = (time) => {
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightIndex, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
     handle5KState = (time) => {
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightIndex, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
     handle6KState = (time) => {
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightIndex, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
     handle4KState = (time) => {
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightIndex, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
 
     handleIdleInit = () => {
         this.resetVelocities();
-        this.attackStruck = false;
+        this.atkStruck = false;
     }
     handleIdleState = (time) => {
         if (control.isUp(this.playerId))
@@ -478,15 +546,15 @@ export class Fighter {
             switch (this.activeCard) {
                 case 'redC':
                     this.changeState(FighterState.FIVE_PUNCH, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'greenC':
                     this.changeState(FighterState.FIVE_KICK, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'blueC':
                     this.changeState(FighterState.BLUE_1, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'drawC':
                     this.drawCard();
@@ -497,7 +565,7 @@ export class Fighter {
             }
         }
         else if (control.isSleight(this.playerId)) {
-            this.expendCard('sleight');
+            this.expendCard('sleight', time);
         }
 
         const newDirection = this.getDirection();
@@ -517,15 +585,15 @@ export class Fighter {
             switch (this.activeCard) {
                 case 'redC':
                     this.changeState(FighterState.SIX_PUNCH, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'greenC':
                     this.changeState(FighterState.SIX_KICK, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'blueC':
                     this.changeState(FighterState.BLUE_1, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'drawC':
                     this.drawCard();
@@ -536,7 +604,7 @@ export class Fighter {
             }
         }
         else if (control.isSleight(this.playerId)) {
-            this.expendCard('sleight');
+            this.expendCard('sleight', time);
         }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);
@@ -560,15 +628,15 @@ export class Fighter {
             switch (this.activeCard) {
                 case 'redC':
                     this.changeState(FighterState.FOUR_PUNCH, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'greenC':
                     this.changeState(FighterState.FOUR_KICK, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'blueC':
                     this.changeState(FighterState.BLUE_1, time);
-                    this.expendCard('play');
+                    this.expendCard('play', time);
                     break;
                 case 'drawC':
                     this.drawCard();
@@ -579,7 +647,7 @@ export class Fighter {
             }
         }
         else if (control.isSleight(this.playerId)) {
-            this.expendCard('sleight');
+            this.expendCard('sleight', time);
         }
         // else if (control.is6P(this.playerId))
         //     this.changeState(FighterState.SIX_PUNCH, time);
@@ -675,6 +743,32 @@ export class Fighter {
             this.direction = newDirection;
             this.changeState(FighterState.CROUCH_TURN, time)
         }
+
+        if (control.isAccept(this.playerId)) {
+            switch (this.activeCard) {
+                // case 'redC':
+                //     this.changeState(FighterState.FIVE_PUNCH, time);
+                //     this.expendCard('play', time);
+                //     break;
+                // case 'greenC':
+                //     this.changeState(FighterState.FIVE_KICK, time);
+                //     this.expendCard('play', time);
+                //     break;
+                // case 'blueC':
+                //     this.changeState(FighterState.BLUE_1, time);
+                //     this.expendCard('play', time);
+                //     break;
+                case 'drawC':
+                    this.drawCard();
+                    break;
+                case 'shuffleC':
+                    this.shuffleCard();
+                    break;
+            }
+        }
+        else if (control.isSleight(this.playerId)) {
+            this.expendCard('sleight', time);
+        }
     }
     handleCrouchDownInit = () => {
         this.resetVelocities(); //velocities to 0
@@ -747,15 +841,23 @@ export class Fighter {
         }
     }
 
-    handleAttHit(time, attStrength, hitLocation) {
-        const newState = this.getHurtState(attStrength, hitLocation);
-        const { velocity, friction } = FighterAttackBaseData[attStrength].slide;
+    handleAtkHit(time, atkStrength, atkType, hitPosition, hurtLocation) {
+        const newState = this.getHurtState(atkStrength, hurtLocation);
+        const { velocity, friction } = FighterAttackBaseData[atkStrength].slide;
 
         this.slideVelocity = velocity;
         this.slideFriction = friction;
+        this.atkStruck = true;
+
+        playSound(this.soundHits[atkStrength][atkType], VOLUME);
+        this.onAtkHit(
+            time,
+            this.opponent.playerId, this.playerId, hitPosition,
+            atkStrength
+        );
         this.changeState(newState, time);
 
-        DEBUG.logHit(this, attStrength, hitLocation);
+        DEBUG.logHit(this, atkStrength, hurtLocation);
     }
 
     updateAnime(time) {
@@ -766,9 +868,9 @@ export class Fighter {
     }
 
     updateHitBoxCollided(time) {
-        const { attackStrength, attackType } = this.states[this.currentState];
+        const { atkStrength, atkType } = this.states[this.currentState];
 
-        if (!attackType || this.attackStruck) return;
+        if (!atkType || this.atkStruck) return;
 
         const actualHitBox = getActualBoxDimensions(this.position, this.direction, this.boxes.hit);
 
@@ -782,7 +884,7 @@ export class Fighter {
 
             if (!boxOverlapHelp(actualHitBox, actualOpponentHurtBox)) continue;
 
-            playSound(this.soundHits[attackStrength][attackType], VOLUME);
+
 
             const hitPosition = {
                 x: (actualHitBox.x + (actualHitBox.width / 2) + actualOpponentHurtBox.x + (actualOpponentHurtBox.width / 2)) / 2,
@@ -791,13 +893,7 @@ export class Fighter {
             hitPosition.x -= 4 - Math.random() * 8;
             hitPosition.y -= 4 - Math.random() * 8;
 
-            this.onAttHit(
-                time,
-                this.playerId, this.opponent.playerId, hitPosition,
-                this.states[this.currentState].attackStrength
-            );
-            this.opponent.handleAttHit(time, attackStrength, hurtLocation);
-            this.attackStruck = true;
+            this.opponent.handleAtkHit(time, atkStrength, atkType, hitPosition, hurtLocation);
             return;
 
         }
@@ -827,7 +923,16 @@ export class Fighter {
     }
 
     update(time, context, camera) {
+        if (this.sleightIndex >= 3){
+            this.sleightIndex = 0;
+            this.isInSleightCombo = false;
+            for (const card of this.sleight){
+                this.discard.push(card);
+            }
+            this.sleight = [];
+        }
         this.states[this.currentState].update(time, context);
+
         this.updateSlide(time);
         this.updatePos(time);
         this.updateAnime(time);

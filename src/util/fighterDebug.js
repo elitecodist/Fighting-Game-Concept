@@ -33,24 +33,46 @@ function drawBox(context, camera, position, direction, dimensions, color) {
     context.stroke();
 }
 
-export function drawCollisionInfo(fighter, context, camera) {
-    const { position, direction, boxes } = fighter;
+export function drawCollisionInfo(entity, context, camera) {
+    switch (entity.constructor.name) {
+        case 'Fireball':
+            const p = entity.position
+            const d = entity.direction
+            const b = entity.boxes
 
-    context.lineWidth = 1;
+            context.lineWidth = 1;
 
-    //Push Boxes
-    drawBox(context, camera, position, direction, Object.values(boxes.push), '#55FF55');
-    //Hurt Boxes
-    for (const hurtBox of Object.values(boxes.hurt)) {
-        drawBox(context, camera, position, direction, hurtBox, '#7777FF');
+            //Push Boxes
+            drawBox(context, camera, p, d, Object.values(b.push), '#55FF55');
+            //Hit Box
+            drawBox(context, camera, p, d, Object.values(b.hit), '#FF0000');
+
+            drawCross(context, camera, p, '#FFFFFF');
+
+
+            break;
+
+        default:
+            const { position, direction, boxes } = entity;
+
+            context.lineWidth = 1;
+
+            //Push Boxes
+            drawBox(context, camera, position, direction, Object.values(boxes.push), '#55FF55');
+            //Hurt Boxes
+            for (const hurtBox of Object.values(boxes.hurt)) {
+                drawBox(context, camera, position, direction, hurtBox, '#7777FF');
+            }
+            //Hit Box
+            drawBox(context, camera, position, direction, Object.values(boxes.hit), '#FF0000');
+
+            drawCross(context, camera, position, '#FFFFFF');
+            break;
     }
-    //Hit Box
-    drawBox(context, camera, position, direction, Object.values(boxes.hit), '#FF0000');
-
-    drawCross(context, camera, position, '#FFFFFF');
 
 }
 
-export function logHit(fighter, hitStrength, hitLocation) {
+export function logHit(entity, hitStrength, hitLocation) {
     console.log(`hit ${hitLocation}: ${hitStrength}`)
+    console.log(`${entity.constructor.name}`)
 }

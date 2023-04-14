@@ -10,20 +10,19 @@ import { FighterAttackStrength, FighterId, FighterAttackBaseData, FIGHTER_HURT_D
 import { LightHitSplash, MedHitSplash, HeavyHitSplash } from "../entities/effects/index.js";
 import { FRAME_TIME } from "../constants/game.js";
 import { CardInfo } from "../entities/CardInfo.js";
+import { EntityList } from "../engine/EntityList.js";
 
 export class BattleScene {
     fighters = [];
     camera = undefined;
     shadows = [];
-    entities = [];
     overlays = [];
     hurtTimer = undefined;
     fighterDrawOrder = [0, 1];
 
     constructor() {
         this.stage = new Stage()
-
-        // this.entities = [];
+        this.entities = new EntityList();
 
         this.startRound();
     }
@@ -41,7 +40,7 @@ export class BattleScene {
 
     getFighterEntity = (fighterState, index) => {
         const FighterEntityClass = this.getFighterEntityClass(fighterState.id);
-        return new FighterEntityClass(index, this.handleAttHit.bind(this), this.addEntity.bind(this));
+        return new FighterEntityClass(index, this.handleAtkHit.bind(this), this.entities);
     }
 
     getFighterEntities() {
@@ -66,15 +65,6 @@ export class BattleScene {
         }
     }
 
-    addEntity(EntityClass, ...args) {
-        this.entities.push(new EntityClass(...args, this.removeEntity));
-    }
-    removeEntity = (entity) => {
-        const index = this.entities.indexOf(entity);
-
-        if (index < 0) return;
-        this.entities.splice(index, 1);
-    }
 
     startRound() {
         this.fighters = this.getFighterEntities();
@@ -90,12 +80,14 @@ export class BattleScene {
         this.camera = new Camera(STAGE_MID_POINT + STAGE_PADDING - 192, 0, this.fighters);
     }
 
-    handleAttHit(time, playerId, opponentId, position, strength){
+    handleAtkHit(time, playerId, opponentId, position, strength){
         gameState.fighters[opponentId].hitPoints -= FighterAttackBaseData[strength].damage;
 
         this.hurtTimer = time.previous + (FIGHTER_HURT_DELAY * FRAME_TIME);
         this.fighterDrawOrder = [opponentId, playerId];
-        this.addEntity(this.getHitSplashClass(strength), position.x, position.y, playerId);
+        if (!position) return;
+
+        this.entities.add(this.getHitSplashClass(strength), position.x, position.y, playerId);
     }
 
     updateFighters(time, context) {
@@ -105,12 +97,6 @@ export class BattleScene {
             } else {
                 fighter.update(time, context, this.camera);
             }
-        }
-    }
-
-    updateEntities(time, context) {
-        for (const entity of this.entities) {
-            entity.update(time, context, this.camera);
         }
     }
 
@@ -127,7 +113,7 @@ export class BattleScene {
 
     update(time, context) {
         this.updateFighters(time, context);
-        this.updateEntities(time, context);
+        this.entities.update(time, context, this.camera);
         this.camera.update(time, context);
         this.updateOverlays(time, context);
     }
@@ -142,12 +128,6 @@ export class BattleScene {
         }
     }
 
-    drawEntities(context) {
-        for (const entity of this.entities) {
-            entity.draw(context, this.camera);
-        }
-    }
-
     drawOverlays(context) {
         for (const overlay of this.overlays) {
             overlay.draw(context, this.camera);
@@ -157,7 +137,7 @@ export class BattleScene {
     draw(context) {
         this.drawStage(context);
         this.drawFighters(context);
-        this.drawEntities(context);
+        this.entities.draw(context, this.camera);
         this.drawOverlays(context);
     }
 }

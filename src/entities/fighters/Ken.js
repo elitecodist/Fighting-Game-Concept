@@ -7,7 +7,7 @@ import { Control } from '../../constants/control.js';
 
 export class Ken extends Fighter {
     deck = [
-        'redC', 'redC', 'greenC', 'blueC', 'greenC',
+        'blueC', 'redC', 'greenC', 'blueC', 'greenC',
         'redC', 'redC', 'greenC', 'blueC', 'greenC',
         'redC', 'redC', 'greenC', 'blueC', 'greenC',
         'redC', 'redC', 'greenC', 'blueC', 'greenC',
@@ -77,14 +77,14 @@ export class Ken extends Fighter {
         ['jab-2', [[[116, 266, 107, 96], [39, 96]], PushBox.STAND, HurtBox.NONE, [13, -86, 56, 15]]],
         ['jab-3', [[[231, 267, 77, 95], [39, 95]], PushBox.STAND]],
         ['jab-4', [[[316, 267, 66, 95], [33, 95]], PushBox.STAND]],
-        
+
         ['strong-1', [[[428, 267, 65, 95], [33, 95]], PushBox.STAND]],
         ['strong-2', [[[501, 267, 71, 95], [36, 95]], PushBox.STAND]],
         ['strong-3', [[[580, 268, 109, 94], [36, 94]], PushBox.STAND, HurtBox.NONE, [15, -82, 59, 13]]],
         ['strong-4', [[[697, 267, 71, 95], [36, 95]], PushBox.STAND]],
         ['strong-5', [[[776, 267, 65, 95], [33, 95]], PushBox.STAND]],
         ['strong-6', [[[849, 267, 66, 95], [33, 95]], PushBox.STAND]],
-        
+
         ['headbutt-1', [[[24, 393, 86, 97], [39, 97]], PushBox.STAND]],
         ['headbutt-2', [[[118, 393, 94, 97], [39, 97]], PushBox.STAND]],
         ['headbutt-3', [[[220, 403, 92, 87], [39, 87]], PushBox.STAND, HurtBox.NONE, [34, -74, 27, 14]]],
@@ -200,8 +200,8 @@ export class Ken extends Fighter {
             ['roundhouse-10', FrameDelay.TRANSITION],
         ],
         [FighterState.BLUE_1]: [
-            ['fireball-1', 2], ['fireball-2', 8], ['fireball-3', 2],
-            ['fireball-4', 20], ['fireball-5', FrameDelay.TRANSITION],
+            ['fireball-1', 2], ['fireball-2', 6], ['fireball-3', 2],
+            ['fireball-4', 10], ['fireball-5', FrameDelay.TRANSITION],
         ],
     };
 
@@ -219,10 +219,10 @@ export class Ken extends Fighter {
 
     fireball = { fired: false, type: undefined };
 
-    constructor(playerId, onAttackHit, addEntity) {
+    constructor(playerId, onAttackHit, entityList) {
         super(playerId, onAttackHit);
 
-        this.addEntity = addEntity;
+        this.entityList = entityList;
 
         this.states[FighterState.BLUE_1] = {
             init: this.handleFireballInit.bind(this),
@@ -236,19 +236,27 @@ export class Ken extends Fighter {
         this.states[FighterState.IDLE].validFrom = [...this.states[FighterState.IDLE].validFrom, FighterState.BLUE_1];
     }
 
-    handleFireballInit(){
+    handleFireballInit() {
         this.resetVelocities();
         playSound(this.voiceFireball, VOLUME);
         this.fireball = { fired: false, type: Control.ACCEPT };
     }
 
-    handleFireballState(time){
+    handleFireballState(time) {
         if (!this.fireball.fired && this.animationFrame === 3) {
             this.fireball.fired = true;
-            this.addEntity(Fireball, this, this.fireball.type, time);
+            this.entityList.add.call(this.entityList, Fireball, time, this, this.fireball.type, time);
         }
 
-        if (!this.isAnimeComplete()) return;
-        this.changeState(FighterState.IDLE, time);
+        if (this.isInSleightCombo) {
+            if (!this.isAnimeComplete()) return;
+            else {
+                this.changeState(FighterState.IDLE, time);
+                this.playSleight(this.sleightCard, time);
+            }
+        } else {
+            if (!this.isAnimeComplete()) return;
+            this.changeState(FighterState.IDLE, time);
+        }
     }
 }

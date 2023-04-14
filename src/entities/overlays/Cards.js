@@ -35,6 +35,7 @@ export class Cards {
         this.p1FourthCard = '';
         this.p1ScrollLAnime = false;
         this.p1ScrollRAnime = false;
+        this.p1IsInSleightCombo = fighters[0].isInSleightCombo;
 
         this.p2FirstCard = '';
         this.p2SecondCard = '';
@@ -77,17 +78,20 @@ export class Cards {
         this.p1Pos = fighters[0].handPos;
         this.p1Sleight = fighters[0].sleight;
         this.p1Discard = fighters[0].discard;
+        this.p1IsInSleightCombo = fighters[0].isInSleightCombo;
 
         //update hand position
-        if (control.isScrollL(0)) {
-            if (this.p1Pos === 0) this.p1Pos = this.p1Hand.length - 1; else this.p1Pos -= 1;
-            this.p1ScrollLAnime = true;
-            playSound(this.cardSounds['scroll'], VOLUME);
-        }
-        if (control.isScrollR(0)) {
-            if (this.p1Pos === this.p1Hand.length - 1) this.p1Pos = 0; else this.p1Pos += 1;
-            this.p1ScrollRAnime = true;
-            playSound(this.cardSounds['scroll'], VOLUME);
+        if (!control.isSleight(0)) {
+            if (control.isScrollL(0)) {
+                if (this.p1Pos === 0) this.p1Pos = this.p1Hand.length - 1; else this.p1Pos -= 1;
+                this.p1ScrollLAnime = true;
+                playSound(this.cardSounds['scroll'], VOLUME);
+            }
+            if (control.isScrollR(0)) {
+                if (this.p1Pos === this.p1Hand.length - 1) this.p1Pos = 0; else this.p1Pos += 1;
+                this.p1ScrollRAnime = true;
+                playSound(this.cardSounds['scroll'], VOLUME);
+            }
         }
         fighters[0].handPos = this.p1Pos;
 
@@ -149,8 +153,13 @@ export class Cards {
     drawP1Cards(context) {
 
         for (let i = 0; i < this.p1Sleight.length; i++) {
-            context.scale(0.75, 0.75)
-            this.drawFrame(context, this.cardspng, this.p1Sleight[i], 35 * i + 10, 20);//1
+            if (this.p1IsInSleightCombo) {
+                context.scale(0.75, 0.75)
+                this.drawFrame(context, this.cardspng, this.p1Sleight[i], 35 * i + 10 + 200, 50);
+            } else {
+                context.scale(0.75, 0.75)
+                this.drawFrame(context, this.cardspng, this.p1Sleight[i], 35 * i + 10, 20);
+            }
         }
 
         if (this.p1ScrollLAnime) {

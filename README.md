@@ -1,4 +1,4 @@
 # Fighting-Game-Concept
-A demo of a game I plan on developing in the future. Made entirely in vanilla javascript.
+Comissioned video game proof-of-concept. Made entirely in vanilla javascript and html.
 
-Video Demonstration: https://youtu.be/9irTx8Jgx98
+Video Demonstration: [https://youtu.be/9irTx8Jgx98](https://youtu.be/_C7MQHwgeg8)https://youtu.be/_C7MQHwgeg8
